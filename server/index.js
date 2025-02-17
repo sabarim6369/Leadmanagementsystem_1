@@ -76,8 +76,8 @@ app.listen(8000,  () => {
 
 // const CallHistory = mongoose.model('CallHistory', callSchema);
 
-// const accountSid = "ACf8ce98cd49578deb2063d0be5931f505"
-// const authToken = "25a38a413225bc610cb21b769681f621";  
+// const accountSid =process.env.TWILLIO_ACCOUNT_SID
+// const authToken = process.env.TWILLIO_AUTHTOKEN;  
 // const client = twilio(accountSid, authToken);
 
 // const app = express();
