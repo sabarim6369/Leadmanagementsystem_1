@@ -21,17 +21,22 @@ const Addpopup = ({ popup, setispopupopen, type,adminid }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token=localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       console.log(token);
-      const tokenvalidation=decodeToken(token);
-     const adminId=tokenvalidation.adminId;
-     const databaseName=tokenvalidation.databaseName;
-     console.log(adminId,databaseName)
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/admin/add`, formData,{
-        headers:{
-          "database":databaseName
+      const tokenvalidation = decodeToken(token);
+      const adminId = tokenvalidation.adminId;
+      const databaseName = tokenvalidation.databaseName;
+      console.log(adminId, databaseName);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/admin/add`, 
+        formData,
+        {
+          headers: {
+            "database": databaseName,
+          }
         }
-      });
+      );
   
       if (response.status === 401) {
         toast.warning("Fill all fields");
@@ -54,10 +59,23 @@ const Addpopup = ({ popup, setispopupopen, type,adminid }) => {
         setispopupopen(false);
       }, 2000);
     } catch (error) {
-      toast.error("Error adding telecaller: " + error.message);
+      // Log error details
+      console.error("❌ Error details:", error);
+      
+      // Handling both network errors and response errors
+      if (error.response) {
+        // The request was made, and the server responded with an error status
+        toast.error(`Error: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        // The request was made, but no response was received
+        toast.error("No response from server.");
+      } else {
+        // Something else happened while setting up the request
+        toast.error(`Error: ${error.message}`);
+      }
     }
-  };
-  ;
+};
+
 
   return (
     popup && (
