@@ -35,6 +35,28 @@ app.use((req, res, next) => {
   }
 });
 
+
+const path=require("path")
+const _dirname=path.dirname("");
+const buildpath=path.join(_dirname,"../client/build");
+app.use(express.static(buildpath));
+app.get("/*",function(req,res){
+  res.sendFile(
+    path.join(_dirname,"../client/build/index.html"),
+    function(err){
+      if(err){
+        res.status(500).send(err);
+      }
+    }
+  )
+
+})
+
+
+
+
+
+
 app.use('/api/superadmin', superadminrouter);
 app.use('/api/admin', adminrouter);
 app.use('/api/telecaller', telecallerroute);
