@@ -169,9 +169,7 @@ export default function LoginPage({ setUserRole }) {
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="text-sm text-center text-gray-600 mt-6">
-          Don’t have an account? <a href="#" className="text-blue-500 font-medium hover:underline">Sign up</a>
-        </p>
+       
       </div>
       <ToastContainer position="top-center" />
     </div>
