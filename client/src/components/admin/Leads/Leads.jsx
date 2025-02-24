@@ -30,7 +30,8 @@ const Leads = () => {
   const [leadassignpopup, setleadassignpopup] = useState(false);
   const [telecallers, setTelecallers] = useState([]);
   const [leads, setLeads] = useState([]);
-
+const [filteredTelecallerData, setFilteredTelecallerData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const fetchLeads = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -42,6 +43,7 @@ const Leads = () => {
       });
       console.log(response.data)
       settelecallerdata(response.data.allleads);
+      setFilteredTelecallerData(response.data.allleads);
       return response.data.allleads;
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -80,7 +82,7 @@ const Leads = () => {
           settelecallerdata(newLeads);
         }
       }
-    }, 5000);
+    }, 60000);
 
     return () => clearInterval(pollInterval);
   }, [fetchLeads, telecallerdata]);
@@ -140,7 +142,23 @@ const Leads = () => {
       console.error(error);
     }
   };
-
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      setFilteredTelecallerData(telecallerdata);
+    } else {
+      const filteredData = telecallerdata.filter((telecaller) => {
+        return (
+          (telecaller.name?.toLowerCase().includes(query.toLowerCase()) || false) 
+          // (telecaller.address?.toLowerCase().includes(query.toLowerCase()) || false) ||
+          // (telecaller.mobilenumber?.toString().includes(query) || false) ||
+          // (telecaller.email?.toLowerCase().includes(query.toLowerCase()) || false)
+        );
+      });
+      setFilteredTelecallerData(filteredData);
+    }
+  };
+  
   const closeModal = () => {
     setselectedtelecaller(null);
   };
@@ -259,11 +277,12 @@ const Leads = () => {
 
       <Searchbar
       options={options}
+      onSearchChange={handleSearchChange}
       />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Leadscard
-            telecallerdata={telecallerdata}
+            telecallerdata={filteredTelecallerData}
             viewmore={viewmore}
             Assignleads={Assignleads}
           />

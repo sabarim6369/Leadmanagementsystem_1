@@ -254,6 +254,7 @@ const opennotes=(lead)=>{
           <Viewmore
             selectedtelecaller={selectedtelecaller}
             closeModal={closeModal}
+            databasename={databasename}
           />
         )}
         {opennotespopup && (

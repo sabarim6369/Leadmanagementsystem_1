@@ -4,7 +4,6 @@ const leadSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-
   mobilenumber: {
     type: Number,
   },
@@ -64,7 +63,20 @@ const leadSchema = new mongoose.Schema({
       },
     },
   ],
-  
+  files: [
+    {
+      filename: {
+        type: String,
+      },
+      fileUrl: {
+        type: String,
+      },
+      uploadedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 module.exports = leadSchema;
