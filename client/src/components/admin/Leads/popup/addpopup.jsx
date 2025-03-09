@@ -50,7 +50,23 @@ const Addpopup = ({ popup, setispopupopen, type }) => {
           }
         }
       );
+      if (response.status === 401) {
+        toast.warning("Fill all fields");
+      } 
+      toast.success("Telecaller added successfully");
 
+      // Reset form
+      setFormData({
+        Name: "",
+        Email: "",
+        Phone: "",
+        City: "",
+        adminId: ""
+      });
+
+      setTimeout(() => {
+        setispopupopen(false);
+      }, 2000);
       if (response.status === 401) {
         toast.warning("Fill all fields");
       } else if (response.status === 402) {
