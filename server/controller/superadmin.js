@@ -63,42 +63,92 @@ const getsuperadmindata = async (req, res) => {
 };
 
 
+// const addadmin = async (req, res) => {
+//     try {
+//         console.log(req.body);
+//         const { email, password, username, superadminId } = req.body;
+
+//         if (!email || !password || !username || !superadminId) {
+//             return res.status(400).json({ message: "Please provide all required fields." });
+//         }
+
+//         const Admin = req.db.model('Admin');
+//         const existingAdmin = await Admin.findOne({ email });
+//         if (existingAdmin) {
+//             return res.status(400).json({ message: "Admin with this email already exists." });
+//         }
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+
+//         const databaseName = `admin_${username}_${email.replace('@', '_').replace('.', '_')}`;
+
+//         const newAdmin = new Admin({
+//             email,
+//             password: hashedPassword,
+//             username,
+//             superadmin: superadminId,
+//             status: "active",
+//             databaseName
+//         });
+
+//         await newAdmin.save();
+
+//         res.status(201).json({ message: "Admin added successfully", data: newAdmin });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: "Error adding admin", error: err });
+//     }
+// };
+
+const sanitizeString = (str) => str.trim().replace(/[^a-zA-Z0-9]/g, ""); // Remove dots and special characters
+
 const addadmin = async (req, res) => {
     try {
         console.log(req.body);
+
         const { email, password, username, superadminId } = req.body;
 
+        // Validate required fields
         if (!email || !password || !username || !superadminId) {
-            return res.status(400).json({ message: "Please provide all required fields." });
+            return res.status(400).json({ message: "All fields are required." });
         }
 
-        const Admin = req.db.model('Admin');
-        const existingAdmin = await Admin.findOne({ email });
+        // Sanitize inputs
+        const sanitizedEmail = email.trim().toLowerCase();
+        const sanitizedUsername = sanitizeString(username);
+        const sanitizedDatabaseName = `admin_${sanitizedUsername}_${sanitizeString(sanitizedEmail)}`;
+
+        // Check if admin already exists
+        const Admin = req.db.model("Admin");
+        const existingAdmin = await Admin.findOne({ email: sanitizedEmail });
+
         if (existingAdmin) {
             return res.status(400).json({ message: "Admin with this email already exists." });
         }
 
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const databaseName = `admin_${username}_${email.replace('@', '_').replace('.', '_')}`;
-
+        // Create new admin
         const newAdmin = new Admin({
-            email,
+            email: sanitizedEmail,
             password: hashedPassword,
-            username,
+            username: sanitizedUsername,
             superadmin: superadminId,
             status: "active",
-            databaseName
+            databaseName: sanitizedDatabaseName
         });
 
         await newAdmin.save();
 
-        res.status(201).json({ message: "Admin added successfully", data: newAdmin });
+        return res.status(201).json({ message: "Admin added successfully", data: newAdmin });
+
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Error adding admin", error: err });
+        console.error("Error adding admin:", err);
+        return res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 };
+
 const addsuperadmin = async (req, res) => {
     try {
         console.log(req.body);

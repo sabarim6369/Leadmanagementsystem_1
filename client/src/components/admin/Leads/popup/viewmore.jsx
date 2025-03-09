@@ -21,9 +21,7 @@ const Viewmore = ({selectedtelecaller,closeModal}) => {
         <p className="text-lg text-gray-600">
           <strong>Status:</strong> {selectedtelecaller.status}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Role:</strong> {selectedtelecaller.role}
-        </p>
+       
       </div>
       <div className="flex justify-end mt-6">
         <button

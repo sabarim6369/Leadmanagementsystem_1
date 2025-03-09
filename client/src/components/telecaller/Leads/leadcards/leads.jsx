@@ -11,7 +11,9 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
   const [loading, setLoading] = useState(false);
 
   const openWhatsAppPopup = (number) => {
+    console.log(number)
     setSelectedNumber(number);
+    
     setShowPopup(true);
   };
 
@@ -24,17 +26,21 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
   };
 
   const sendWhatsAppMessage = async () => {
+console.log("😎😎😎😎😎")
+console.log(selectedNumber)
     if (!selectedNumber || (!message && selectedFiles.length === 0)) return;
+    console.log("😎😍😍😍😍😎😎😎😎")
 
     setLoading(true);  // Start loading
 
     const formData = new FormData();
-    formData.append("number", selectedNumber);
+    formData.append("email", selectedNumber);
     formData.append("message", message);
 
     selectedFiles.forEach((file) => {
       formData.append("files", file);
     });
+    console.log("😍🤣😂❤️‍🔥😎😎")
 
     try {
       const response = await axios.post(
@@ -113,7 +119,7 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
               Notes
             </button>
 
-            <button onClick={() => openWhatsAppPopup(telecaller.mobilenumber)}>
+            <button onClick={() => openWhatsAppPopup(telecaller.email)}>
               <FaWhatsapp size={28} className="text-green-500 hover:text-green-600" />
             </button>
           </div>

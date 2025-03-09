@@ -366,19 +366,24 @@ const addleads = async (req, res) => {
         console.log(req.body);
         const { leadsData, adminid } = req.body;
 
+        if (!mongoose.Types.ObjectId.isValid(adminid)) {
+            console.log("Invalid adminid:", adminid);
+            return res.status(400).json({ message: "Invalid Admin ID" });
+        }
         if (!Array.isArray(leadsData) || leadsData.length === 0) {
             return res.status(400).json({ message: "No data provided or invalid format." });
         }
 
         const leads = leadsData.map((lead) => ({
-            name: `${lead['First Name']} ${lead['Last Name']}`,
-            mobilenumber: lead.Id,
-            address: lead.Country || "",
+            name: lead.Name,
+            mobilenumber: lead.Phone,
+            address: lead.City || "",
             gender: lead.Gender || "",
             country: lead.Country || "",
             age: lead.Age || null,
             date: lead.Date || "",
             id: lead.Id || null,
+            email:lead.Email
         }));
 
         console.log("Processing leads...");

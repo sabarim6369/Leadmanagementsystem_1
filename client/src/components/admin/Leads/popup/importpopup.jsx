@@ -64,7 +64,7 @@ const ImportPopup = ({ isOpen, closePopup, handleFileImport }) => {
             type="file"
             ref={fileInputRef}
             className="hidden"
-            accept=".xls,.xlsx"
+            accept=".xls,.xlsx,.csv"
             multiple
             onChange={handleFileSelection}
           />
