@@ -17,6 +17,7 @@ const Telecallers = () => {
   const[leads,setassignedleads]=useState([]);
   const [assignedleadmodel,setassignedleadmodel]=useState(false)
   const options = ["Option 1", "Option 2", "Option 3"];
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchalltelecallers = async () => {
@@ -79,6 +80,11 @@ const Telecallers = () => {
   const closeModal = () => {
     setselectedtelecaller(null);
   };
+  const filteredTelecallers = telecallerdata.filter(telecaller => 
+    telecaller.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (telecaller.number && telecaller.number.toString().includes(searchQuery)) ||
+    (telecaller.email && telecaller.email.toLowerCase().includes(searchQuery))
+  );
   if (loading1) {
     return (
       <div className="flex h-screen bg-gray-900">
@@ -123,9 +129,13 @@ const Telecallers = () => {
             <input
               className="p-2 pl-12 rounded-xl bg-gray-700 text-white w-full"
               placeholder="Search here..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+
+              
             />
           </div>
-          <div className="status flex items-center">
+          {/* <div className="status flex items-center">
             <div className="p-2 ml-3 bg-blue-500 rounded-2xl">
               <select
                 name=""
@@ -139,12 +149,12 @@ const Telecallers = () => {
                 ))}
               </select>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {telecallerdata.length > 0 ? (
-          telecallerdata.map((telecaller, index) => (
+        {filteredTelecallers.length > 0 ? (
+          filteredTelecallers.map((telecaller, index) => (
             <div
               key={index}
               className="bg-gray-800 rounded-2xl shadow-lg p-4 flex flex-col"

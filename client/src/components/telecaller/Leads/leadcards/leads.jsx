@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp,FaEnvelope } from "react-icons/fa";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -101,7 +101,7 @@ console.log(selectedNumber)
             </div>
             <div className="flex items-center text-gray-300">
               <i className="fa fa-envelope text-blue-400 text-lg mr-2"></i>
-              <p>{telecaller.assignedTo?.email}</p>
+              <p>{telecaller.email}</p>
             </div>
           </div>
 
@@ -120,7 +120,9 @@ console.log(selectedNumber)
             </button>
 
             <button onClick={() => openWhatsAppPopup(telecaller.email)}>
-              <FaWhatsapp size={28} className="text-green-500 hover:text-green-600" />
+              {/* <FaWhatsapp size={28} className="text-green-500 hover:text-green-600" /> */}
+              <FaEnvelope size={28} className="text-pink-500 hover:text-blue-600" />
+
             </button>
           </div>
         </div>
@@ -129,7 +131,7 @@ console.log(selectedNumber)
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-2xl shadow-2xl w-[400px] max-w-full transform transition-all duration-300">
-            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">Send WhatsApp Message</h2>
+            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">Send Message</h2>
 
             <textarea
               className="w-full p-3 border-2 rounded-lg mb-4 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"

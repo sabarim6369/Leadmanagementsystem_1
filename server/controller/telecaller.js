@@ -57,7 +57,7 @@ const  getAssignedLeads = async (req, res) => {
 const Telecaller = req.db.model("Telecaller");
 const telecaller = await Telecaller.findById(telecallerId).populate({
     path: "leads",
-    select: "name mobilenumber status notes callbackTime files email",
+    select: "name mobilenumber status notes callbackTime files email address",
     populate: {
         path: "notes.telecallerId",
         model: "Telecaller", 

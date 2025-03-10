@@ -33,6 +33,7 @@ const TelecallersLeads = () => {
   const [telecallers, setTelecallers] = useState([]);
   const [leads, setLeads] = useState([]);
 const[telecallerid,settelecallerid]=useState("");
+const [searchQuery, setSearchQuery] = useState(""); 
   const fetchLeads = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -193,7 +194,12 @@ const opennotes=(lead)=>{
       }
     }
   };
-
+  const filteredLeads = telecallerdata.filter(lead => 
+    lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.mobilenumber && lead.mobilenumber.toString().includes(searchQuery))||
+    lead.email.includes(searchQuery)
+  );
+  
   if (loading1) {
     return (
       <div className="flex h-screen bg-gray-900">
@@ -238,12 +244,14 @@ const opennotes=(lead)=>{
         </div>
 
       <Searchbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       options={options}
       />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Leadscard
-            telecallerdata={telecallerdata}
+            telecallerdata={filteredLeads}
             viewmore={viewmore}
             opennotes={opennotes}
             databasename={databasename}

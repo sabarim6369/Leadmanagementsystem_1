@@ -20,7 +20,7 @@ const AdminProfile = () => {
   const [leadcount, setleadcount] = useState();
   const [topTelecallers, setTopTelecallers] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+const[adminid,setadminid]=useState(null)
   useEffect(() => {
     const adminDetails = JSON.parse(localStorage.getItem("admindetails"));
     if (adminDetails) {
@@ -35,6 +35,8 @@ const AdminProfile = () => {
         const token = localStorage.getItem("token");
         const tokenvalidation = decodeToken(token);
         const databasename = tokenvalidation.databaseName;
+        const adminid=tokenvalidation.adminId
+        setadminid(adminid)
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/admin/getadmindetails`, {
           headers: { "database": databasename }
         });
@@ -66,7 +68,7 @@ const AdminProfile = () => {
         {isEditMode ? (
           <EditProfile adminname={adminname} adminemail={adminemail} setIsEditMode={setIsEditMode} />
         ) : isChangePassword ? (
-          <ChangePassword setIsChangePassword={setIsChangePassword} />
+          <ChangePassword setIsChangePassword={setIsChangePassword} adminid={adminid}/>
         ) : (
           <>
             <ProfileCard adminname={adminname} adminemail={adminemail} />

@@ -585,7 +585,38 @@ console.log(topTelecallers)
         res.status(500).json({ message: "Error fetching telecaller history.", error: err });
     }
 };
+const changepassword = async (req, res) => {
+    try {
+      const { adminid, currentPassword, newPassword } = req.body;
+  console.log(req.body)
+      if (!adminid || !currentPassword || !newPassword) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      const Admin = req.db.model('Admin');
 
+      const admin = await Admin.findById(adminid);
+      if (!admin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+  
+      const isMatch = await bcrypt.compare(currentPassword, admin.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Incorrect current password" });
+      }
+  
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      admin.password = hashedPassword;
+      await admin.save();
+  
+      res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Error in changepassword:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  
 
 
 
@@ -604,5 +635,6 @@ module.exports = {
     getallleads,
     assignallleads,
     getadmindetails,
-    getstats
+    getstats,
+    changepassword
 };

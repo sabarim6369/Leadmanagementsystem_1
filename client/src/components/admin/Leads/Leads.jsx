@@ -167,7 +167,13 @@ const [filteredTelecallerData, setFilteredTelecallerData] = useState([]);
     setopentools(false);
     setImportPopup(true);
   };
-
+  
+  const filteredLeads = telecallerdata.filter(lead => 
+    lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.mobilenumber && lead.mobilenumber.toString().includes(searchQuery))||
+    lead.email.includes(searchQuery)
+  );
+  
   const openassignleads = async () => {
     try {
       const response = await axios.put(
@@ -276,13 +282,14 @@ const [filteredTelecallerData, setFilteredTelecallerData] = useState([]);
         </div>
 
       <Searchbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       options={options}
-      onSearchChange={handleSearchChange}
       />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Leadscard
-            telecallerdata={filteredTelecallerData}
+            telecallerdata={filteredLeads}
             viewmore={viewmore}
             Assignleads={Assignleads}
           />
