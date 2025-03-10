@@ -87,13 +87,19 @@ export default function LoginPage({ setUserRole }) {
           navigate("/dashboard");
         }, 2000);
       }
-      } else {
+      } 
+     
+      else {
         toast.error("Login failed. Please try again.");
       }
     } catch (error) {
       if (error.response?.status === 401) {
         toast.error("Email does not exist.");
-      } else if (error.response?.status === 400) {
+      } 
+      else if(error.response?.status===403){
+        toast.error(error.response?.data.message)
+      }
+      else if (error.response?.status === 400) {
         toast.error("Invalid credentials.");
       } else {
         toast.error("An error occurred. Please try again.");

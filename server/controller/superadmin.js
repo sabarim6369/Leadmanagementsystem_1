@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const Admin = require('../schema/Adminschema'); 
 const jwt = require('jsonwebtoken');
-    const getadmindetails = async (req, res) => {
+const getadmindetails = async (req, res) => {
         try {
             const Admin = req.db.model('Admin');
-            const admindetail = await Admin.find();
+            const admindetail = await Admin.find({status:{$in:["active","paused"]}});
 
             const formattedAdmins = admindetail.map((admin) => ({
                 _id: admin._id,
@@ -251,24 +251,66 @@ const deleteadmin = async (req, res) => {
 };
 
 const pauseadmin = async (req, res) => {
+    console.log("😎😎😎😎")
     try {
-        const { adminId } = req.params;
-
-        const admin = await req.db.Admin.findById(adminId);
+        const { adminId,status } = req.body;
+const Admin=req.db.model('Admin');
+        const admin = await Admin.findById(adminId);
         if (!admin) {
             return res.status(404).json({ message: "Admin not found." });
         }
-
+        let change=''
+       if(status==="active"){
         admin.status = "paused";
+    change="paused"
+       }
+       else if(status==="paused"){
+        admin.status="active"
+        change="activated"
+       }
+       else if(status==="delete"){
+admin.status="inactive";
+change="Deleted"
+       }
         await admin.save();
 
-        res.status(200).json({ message: "Admin paused successfully.", data: admin });
+        res.status(200).json({ message: `Admin ${change} successfully.`, data: admin });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Error pausing admin", error: err });
+        res.status(500).json({ message: `Error ${change} admin`, error: err });
     }
 };
+const changepassword = async (req, res) => {
+    try {
+      const { adminid, currentPassword, newPassword } = req.body;
+  console.log(req.body)
+      if (!adminid || !currentPassword || !newPassword) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      const SuperAdmin = req.db.model('Superadmin');
 
+      const admin = await SuperAdmin.findById(adminid);
+      if (!admin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+  
+      const isMatch = await bcrypt.compare(currentPassword, admin.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Incorrect current password" });
+      }
+  
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      admin.password = hashedPassword;
+      await admin.save();
+  
+      res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Error in changepassword:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
 module.exports = {
     addadmin,
     updateadmin,
@@ -277,5 +319,6 @@ module.exports = {
     superadminlogin,
     addsuperadmin,
     getadmindetails,
-    getsuperadmindata
+    getsuperadmindata,
+    changepassword
 };

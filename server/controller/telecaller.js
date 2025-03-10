@@ -111,7 +111,12 @@ const login = async (req, res) => {
         if (!admin) {
             return res.status(401).json({ message: "Admin not found." });
         }
-
+        if (admin.status === "paused") {
+            return res.status(403).json({ message: "Your branch's account has been paused. Please wait until your admin reaches out to the superadmin for resolution." });
+        } 
+        if (admin.status === "inactive") {
+            return res.status(403).json({ message: "Your branch's account has been deleted." });
+        }
         const telecaller = admin.telecallers.find(tc => tc.email === email);
 
         if (!telecaller) {

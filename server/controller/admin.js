@@ -22,6 +22,12 @@ console.log(req.body)
         if (!admin) {
             return res.status(401).json({ message: "Admin not found." });
         }
+        if (admin.status === "paused") {
+            return res.status(403).json({ message: "Your account has been paused. Reach out to the superadmin for details." });
+        } 
+        if (admin.status === "inactive") {
+            return res.status(403).json({ message: "Your account has been deleted." });
+        }
         console.log(admin.telecallers.length)
 
         const isMatch = await bcrypt.compare(password, admin.password);
