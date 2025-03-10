@@ -40,6 +40,7 @@ const response = await axios.patch(`${process.env.REACT_APP_API_URL}/superadmin/
 });
 if(response.status===200){
   toast.success(response.data.message)
+  window.location.reload()
 }
 
   }
