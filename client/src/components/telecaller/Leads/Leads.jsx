@@ -64,7 +64,7 @@ const[Status,setStatus]=useState("");
       const tokenvalidation = decodeToken(token);
       const adminId = tokenvalidation.adminId;
       const databaseName = tokenvalidation.databaseName;
-      
+      console.log("😍😍😍😍😍",adminId);
       setadminid(adminId);
       setdatabasename(databaseName);
       
@@ -172,7 +172,7 @@ const opennotes=(lead)=>{
     try {
       const response = await axios.post(
        `${process.env.REACT_APP_API_URL}/admin/addleads`,
-        { leadsData: allImportedData },
+        { leadsData: allImportedData,adminid },
         { headers: { "database": databasename } }
       );
 
@@ -222,6 +222,21 @@ const opennotes=(lead)=>{
       <div className="flex-grow p-4 md:p-6 overflow-auto">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl text-white">Leads</h1>
+          <div className="flex items-center gap-4">
+            <button
+              className="text-white cursor-pointer"
+              onClick={openmodel}
+            >
+              <i className="fa fa-bars text-xl"></i>
+            </button>
+            <Toolmodal
+              opentools={opentools}
+              add={add}
+              openImportPopup={openImportPopup}
+              openassignleads={openassignleads}
+            
+            />
+          </div>
           {/* <div
             className="hidden sm:block text-white ml-auto mr-3 cursor-pointer"
             onClick={openmodel}
@@ -287,6 +302,9 @@ const opennotes=(lead)=>{
           setispopupopen={setispopupopen}
           type={"Telecaller"}
           adminid={adminid}
+          telecallerid={telecallerid}
+
+
         />
       </div>
       <ToastContainer position="top-center" />

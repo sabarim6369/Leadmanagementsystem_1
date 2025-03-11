@@ -7,6 +7,8 @@ const fileUpload = require("express-fileupload");
 const cloudinary = require("cloudinary").v2;
 const express = require("express");
 const app = express();
+const mongoose = require('mongoose');
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(fileUpload());
@@ -168,7 +170,7 @@ const login = async (req, res) => {
 
         console.log("Database Name:", databaseName);
 
-        const token = jwt.sign({ telecallerId: foundTelecaller._id, databaseName, role: "telecaller" }, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
+        const token = jwt.sign({ telecallerId: foundTelecaller._id, adminId: admin._id, databaseName, role: "telecaller" }, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
 
         res.status(200).json({ message: "Login successful", token });
     } catch (err) {
@@ -322,7 +324,90 @@ const addfiles=async(req,res)=>{
         }
 }
 
-  
+const addLeadsFromTelecaller = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { leadsData, adminid, telecallerId } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(adminid)) {
+            console.log("Invalid adminid:", adminid);
+            return res.status(400).json({ message: "Invalid Admin ID" });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(telecallerId)) {
+            console.log("Invalid telecallerId:", telecallerId);
+            return res.status(400).json({ message: "Invalid Telecaller ID" });
+        }
+
+        if (!Array.isArray(leadsData) || leadsData.length === 0) {
+            return res.status(400).json({ message: "No data provided or invalid format." });
+        }
+
+        const leads = leadsData.map((lead) => ({
+            name: lead.Name,
+            mobilenumber: lead.Phone,
+            address: lead.City || "",
+            gender: lead.Gender || "",
+            country: lead.Country || "",
+            age: lead.Age || null,
+            date: lead.Date || "",
+            id: lead.Id || null,
+            email: lead.Email,
+            assignedTo: [telecallerId],  // Assign to telecaller
+            adminId: adminid,  // Assign to admin
+            status: "assigned" // Set lead status as assigned
+        }));
+
+        console.log("Processing leads...");
+
+        const Leads = req.db.model("Lead");
+        const result = await Leads.insertMany(leads);
+        console.log("Leads inserted successfully:", result.length);
+
+        const superAdminDbURI = process.env.MONGODB_SUPERADMINURI;
+        const superAdminConnection = await mongoose.createConnection(superAdminDbURI).asPromise();
+        console.log("Connected successfully to SuperAdmin DB");
+
+        const AdminModel = superAdminConnection.model("Admin", require("../schema/Adminschema"));
+        await AdminModel.updateOne(
+            { _id: adminid },
+            { $inc: { leads: result.length } }
+        );
+        console.log("Updated Admin leads count.");
+
+        const TelecallerModel = superAdminConnection.model("Telecaller", require("../schema/telecallerschema"));
+        await TelecallerModel.updateOne(
+            { _id: telecallerId },
+            { $inc: { assignedLeads: result.length } }
+        );
+        console.log("Updated Telecaller leads count.");
+
+        // Assign Leads to Telecaller
+        const Telecaller = req.db.model("Telecaller");
+        const telecaller = await Telecaller.findById(telecallerId);
+        if (!telecaller) {
+            return res.status(404).json({ message: "Telecaller not found." });
+        }
+
+        for (const lead of result) {
+            telecaller.leads.push(lead._id);
+        }
+
+        telecaller.pending += result.length;
+        await telecaller.save();
+
+        res.status(201).json({
+            message: "Leads uploaded and assigned successfully",
+            totalLeadsInserted: result.length
+        });
+
+    } catch (err) {
+        console.error("Error uploading leads:", err);
+        res.status(500).json({ message: "Error uploading leads", error: err.message });
+    }
+};
+
+
 
 module.exports = {
     updateLeadResult,
@@ -331,5 +416,6 @@ module.exports = {
     login,
     addnotestotelecallerandlead,
     addfiles,
-    getTodaysCallbacks
+    getTodaysCallbacks,
+    addLeadsFromTelecaller
 };

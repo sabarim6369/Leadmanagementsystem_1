@@ -14,10 +14,7 @@ const Toolmodal = ({ opentools, add, openImportPopup,openassignleads }) => {
         <i className="fa fa-upload text-white"></i>
         <h3 className="text-white ml-3 text-wrap">Import Leads</h3>
       </div>
-      <div className="flex items-center cursor-pointer mt-4" onClick={openassignleads}>
-        <i className="fa fa-add text-white"></i>
-        <h3 className="text-white ml-3 text-wrap">Assign Leads</h3>
-      </div>
+     
     </div>
   );
 };
