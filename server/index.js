@@ -46,6 +46,7 @@ app.use('/api/telecaller', telecallerroute);
 app.use("/api/twillio",twilliorouter);
 
 require("./cronjob/callbackscheduled")
+require("./cronjob/dailyreport")
 app.listen(8000, "0.0.0.0", () => {
   console.log("Server running on port 8000");
 });
