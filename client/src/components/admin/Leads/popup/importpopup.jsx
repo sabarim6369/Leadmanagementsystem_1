@@ -26,9 +26,8 @@ const ImportPopup = ({ isOpen, closePopup, handleFileImport }) => {
       allImportedData.push(...fileData);
     }
 
-    handleFileImport(allImportedData); 
+    handleFileImport(allImportedData);
     setImportedFiles([]);
-    // closePopup();
   };
 
   const processSingleFile = (file) => {
@@ -40,11 +39,34 @@ const ImportPopup = ({ isOpen, closePopup, handleFileImport }) => {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
-        resolve(jsonData); 
+        resolve(jsonData);
       };
       reader.onerror = reject;
       reader.readAsArrayBuffer(file);
     });
+  };
+
+  const downloadSampleFile = () => {
+    const sampleData = [
+      ["Name", "Phone", "Email", "City", "Source"],
+      ["Yogeshwaran", "8013000000", "yogey539@", "Salem", "WhatsApp"],
+    
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sampleData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sample Data");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Sample_Leads.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
@@ -68,6 +90,13 @@ const ImportPopup = ({ isOpen, closePopup, handleFileImport }) => {
             multiple
             onChange={handleFileSelection}
           />
+
+          <button
+            className="py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 mt-2"
+            onClick={downloadSampleFile}
+          >
+            Download Sample File
+          </button>
 
           <ul className="text-gray-800 text-sm mt-2 p-2">
             {importedFiles.map((file, index) => (

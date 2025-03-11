@@ -256,6 +256,7 @@ const [filteredTelecallerData, setFilteredTelecallerData] = useState([]);
         <Sidebar />
       </div>
       <div className="flex-grow p-4 md:p-6 overflow-auto">
+      
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl text-white">Leads</h1>
           <div
