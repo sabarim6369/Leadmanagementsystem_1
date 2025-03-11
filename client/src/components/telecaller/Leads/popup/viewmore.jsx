@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiFolder, FiX, FiUpload, FiTrash, FiDownload } from "react-icons/fi";
 import axios from 'axios'
-const Viewmore = ({ selectedtelecaller, closeModal,databasename}) => {
+const Viewmore = ({ selectedtelecaller, closeModal,databasename,toast}) => {
   const [showFiles, setShowFiles] = useState(false);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,12 +33,12 @@ const Viewmore = ({ selectedtelecaller, closeModal,databasename}) => {
       );
     } catch (error) {
       console.error("Delete failed:", error);
-      alert("Failed to delete the file.");
+      toast.error("Failed to delete the file.");
     }
   };
   const handleSave = async () => {
     if (files.length === 0) {
-        alert("Please upload at least one file.");
+        toast.warning("Please upload at least one file.");
         return;
     }
 
@@ -60,11 +60,15 @@ const Viewmore = ({ selectedtelecaller, closeModal,databasename}) => {
 
         const data = response.data; 
         if (data.success) { 
-            alert("Files uploaded successfully!");
+            toast.success("Files uploaded successfully!");
             const uploadedFiles = data.files || [];
             selectedtelecaller.files = [...selectedtelecaller.files, ...uploadedFiles];
             setFiles([]); 
             setShowFiles(false);
+            setTimeout(()=>{
+              window.location.reload();
+
+            },2000)
         } else {
             alert(`Error: ${data.error}`);
         }
