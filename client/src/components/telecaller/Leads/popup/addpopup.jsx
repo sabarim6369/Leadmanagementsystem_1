@@ -54,7 +54,7 @@ const Addpopup = ({ popup, setispopupopen, type,telecallerid }) => {
       } 
       toast.success("Leads added successfully");
 
-    
+    window.location.reload();
       setFormData({
         Name: "",
         Email: "",
