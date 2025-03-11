@@ -16,6 +16,7 @@ import Admin from "./components/superadmin/admins/admin";
 import History from "./components/telecaller/History/history";
 import TelecallerProfile from "./components/telecaller/Profile/Profile";
 import SuperadminProfile from "./components/superadmin/profile/profile";
+import Callback from "./components/telecaller/callback/callback";
 import { jwtDecode } from "jwt-decode";
 
 const App = () => {
@@ -46,52 +47,81 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-      <Route
-  path="/"
-  element={
-    userRole === "superadmin" ? (
-      <Navigate to="/admindashboard" replace />
-    ) : (
-      <Navigate to="/dashboard" replace />
-    )
-  }
-/>
+        <Route
+          path="/"
+          element={
+            userRole === "superadmin" ? (
+              <Navigate to="/admindashboard" replace />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          }
+        />
 
-        <Route path="/login" element={<LoginPage setUserRole={setUserRole} />} />
+        <Route
+          path="/login"
+          element={<LoginPage setUserRole={setUserRole} />}
+        />
 
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute
-              element={userRole === "admin" ? <Dashboard /> : <TelecallersDashboard />}
+              element={
+                userRole === "admin" ? <Dashboard /> : <TelecallersDashboard />
+              }
               allowedRoles={["admin", "telecaller"]}
             />
           }
         />
-<Route 
-  path="/profile" 
-  element={
-    <ProtectedRoute 
-      element={
-        userRole === "admin" ? <AdminProfile /> :
-        userRole === "superadmin" ? <SuperadminProfile /> :
-        <TelecallerProfile />
-      } 
-      allowedRoles={["admin", "superadmin", "telecaller"]} 
-    />
-  } 
-/>
-        <Route path="/report" element={<ProtectedRoute element={<Report />} allowedRoles={["admin", "telecaller"]} />} />
-        <Route path="/telecallers" element={<ProtectedRoute element={<Telecallers />} allowedRoles={["admin"]} />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute
+              element={
+                userRole === "admin" ? (
+                  <AdminProfile />
+                ) : userRole === "superadmin" ? (
+                  <SuperadminProfile />
+                ) : (
+                  <TelecallerProfile />
+                )
+              }
+              allowedRoles={["admin", "superadmin", "telecaller"]}
+            />
+          }
+        />
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute
+              element={<Report />}
+              allowedRoles={["admin", "telecaller"]}
+            />
+          }
+        />
+        <Route
+          path="/telecallers"
+          element={
+            <ProtectedRoute
+              element={<Telecallers />}
+              allowedRoles={["admin"]}
+            />
+          }
+        />
         <Route
           path="/leads"
           element={
-            <ProtectedRoute element={userRole === "admin" ? <Leads /> : <TelecallersLeads />} allowedRoles={["admin", "telecaller"]} />
+            <ProtectedRoute
+              element={userRole === "admin" ? <Leads /> : <TelecallersLeads />}
+              allowedRoles={["admin", "telecaller"]}
+            />
           }
         />
         <Route path="/admindashboard" element={<SuperadminDashboard />} />
         <Route path="/admins" element={<Admin />} />
         <Route path="/history" element={<History />} />
+        <Route path="/callback" element={<Callback />} />
       </Routes>
     </BrowserRouter>
   );

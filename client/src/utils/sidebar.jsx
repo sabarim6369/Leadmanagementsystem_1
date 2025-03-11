@@ -42,6 +42,7 @@ const Sidebar = () => {
         if(path==="/leads") return 8
         if(path=="/admins") return 9;
         if(path=="/admindashboard") return 10;
+        if(path=="/callback") return 20;
     })
 
     const signout=()=>{
@@ -84,6 +85,9 @@ const Sidebar = () => {
           case 10:
             if(currentPath!=='/admindashboard') navigate("/admindashboard");
             break;
+          case 20:
+            if(currentPath!=="/callback") navigate("/callback");
+            break;  
 
           default:
             break;
@@ -150,6 +154,11 @@ const Sidebar = () => {
                        {role==="telecaller" &&  <div onClick={()=>setselect(6)} className={`flex items-center cursor-pointer ${select===6?'bg-mint-green p-3 rounded':'text-white'}`}>
                             <i className={`fas fa-history fa-2x mr-4 text-gray-500 group-hover:text-blue-500 ${select===6?'text-black':'text-grey'}`}></i>
                             <h2 className={`text-white text-2xl  ${select===6?'font-bold text-black':'text-white'}`}>History</h2>
+                        </div>
+}
+                       {role==="telecaller" &&  <div onClick={()=>setselect(20)} className={`flex items-center cursor-pointer ${select===20?'bg-mint-green p-3 rounded':'text-white'}`}>
+                            <i className={`fas fa-history fa-2x mr-4 text-gray-500 group-hover:text-blue-500 ${select===20?'text-black':'text-grey'}`}></i>
+                            <h2 className={`text-white text-2xl  ${select===20?'font-bold text-black':'text-white'}`}>Callback</h2>
                         </div>
 }
                         <div onClick={signout} className={`flex items-center cursor-pointer ${select===7?'bg-mint-green p-3 rounded':'text-white'}`}>

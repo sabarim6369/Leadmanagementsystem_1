@@ -45,7 +45,7 @@ useEffect(()=>{
             <thead>
               <tr className="bg-gradient-to-r from-gray-700 to-gray-600 text-gray-100 uppercase text-sm font-semibold">
                 <th className="p-4">Lead ID</th>
-                <th className="p-4">Action</th>
+                <th className="p-4">Mobile number</th>
                 <th className="p-4">Notes</th>
                 <th className="p-4">Callback scheduled</th>
 
@@ -64,7 +64,7 @@ useEffect(()=>{
       >
         <td className="p-4 text-sm font-mono text-gray-300">{item.leadId?.name || "N/A"}</td>
         <td className="p-4 font-medium text-green-400">{item.leadId?.mobilenumber}</td>
-        <td className="p-4 italic text-gray-400 truncate max-w-xs overflow-hidden">{item.notes}</td>
+        <td className="p-4 italic text-gray-400 truncate max-w-xs overflow-hidden">{item.notes||"No notes available"}</td>
         <td className="p-4 italic text-gray-400">
             {item?.callbackScheduled?item?.callbackTime:"No callback Scheduled"}
         </td>

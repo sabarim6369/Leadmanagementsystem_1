@@ -96,6 +96,32 @@ const getTelecallerHistory = async (req, res) => {
         res.status(500).json({ message: "Error fetching telecaller history.", error: err });
     }
 };
+
+const getTodaysCallbacks = async (req, res) => {
+    try {
+        console.log("Fetching today's callbacks...");
+        const { telecallerId } = req.params;
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+        
+        const Telecaller = req.db.model("Telecaller");
+
+        const telecaller = await Telecaller.findById(telecallerId).populate("history.leadId");
+        if (!telecaller) {
+            return res.status(404).json({ message: "Telecaller not found." });
+        }
+
+        // Filter only today's callbacks
+        const todaysCallbacks = telecaller.history.filter(entry => 
+            entry.callbackTime && entry.callbackTime.toISOString().split("T")[0] === today
+        );
+console.log(todaysCallbacks.length)
+        res.status(200).json({ callbacks: todaysCallbacks, telecallerDetails: telecaller });
+    } catch (err) {
+        console.error("Error fetching today's callbacks:", err);
+        res.status(500).json({ message: "Error fetching today's callback schedule.", error: err });
+    }
+};
+
 const login = async (req, res) => {
     const { email, password } = req.body;
     console.log("😎😎",req.body);
@@ -304,5 +330,6 @@ module.exports = {
     getTelecallerHistory,
     login,
     addnotestotelecallerandlead,
-    addfiles
+    addfiles,
+    getTodaysCallbacks
 };
