@@ -4,6 +4,8 @@ import { FiPhone, FiMail, FiCalendar, FiEdit2, FiLock, FiSettings } from 'react-
 import { BiSolidPhoneCall, BiSolidPhone, BiSolidPhoneOff, BiSolidCheckCircle } from 'react-icons/bi'
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import HashLoader from "react-spinners/HashLoader";
+
 const telecaller = {
   name: "John Doe",
   username: "johndoe123",
@@ -62,7 +64,9 @@ const TelecallerProfile = () => {
       return   <div className="flex h-screen bg-gray-900">
       <div className="lg:w-[250px] w-0">
         <Sidebar />
-      </div><div className="text-white">Loading...</div>
+      </div><div className="flex-1 flex justify-center items-center">
+          <HashLoader color="#36d7b7" size={100} />
+        </div>
       </div>;
     }
   const renderTabContent = () => {

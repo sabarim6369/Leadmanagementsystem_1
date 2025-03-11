@@ -7,6 +7,7 @@ import LeadStatus from './Leadstatus';
 import Callinsights from './Callinsights';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
+import HashLoader from "react-spinners/HashLoader";
 
 const TelecallersDashboard = () => {
   const [telecallerid, setTelecallerId] = useState("");
@@ -50,7 +51,9 @@ const TelecallersDashboard = () => {
     return   <div className="flex h-screen bg-gray-900">
     <div className="lg:w-[250px] w-0">
       <Sidebar />
-    </div><div className="text-white">Loading...</div>
+    </div><div className="flex-1 flex justify-center items-center">
+          <HashLoader color="#36d7b7" size={100} />
+        </div>
     </div>;
   }
   return (
