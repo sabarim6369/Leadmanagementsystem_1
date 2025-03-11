@@ -184,7 +184,7 @@ const addsuperadmin = async (req, res) => {
 };
 
 const superadminlogin=async(req,res)=>{
-    const {email,password}=req.body;
+    const {email,password,rememberMe}=req.body;
     console.log(req.body)
     const Superadmin = req.db.model('Superadmin');
     const superadmin= await Superadmin.findOne({email});
@@ -195,7 +195,7 @@ const superadminlogin=async(req,res)=>{
             if (!isMatch) {
                 return res.status(400).json({ message: "Invalid credentials." });
             }
-    const token = jwt.sign({ adminId: superadmin._id, databaseName:"superadmin" ,role:"superadmin"}, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ adminId: superadmin._id, databaseName:"superadmin" ,role:"superadmin"}, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
       
     res.status(200).json({ message: "Login successful", token,admindetails:superadmin});
 

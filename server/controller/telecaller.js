@@ -123,7 +123,7 @@ console.log(todaysCallbacks.length)
 };
 
 const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password,rememberMe } = req.body;
     console.log("😎😎",req.body);
 
     if (!email || !password) {
@@ -168,7 +168,7 @@ const login = async (req, res) => {
 
         console.log("Database Name:", databaseName);
 
-        const token = jwt.sign({ telecallerId: foundTelecaller._id, databaseName, role: "telecaller" }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ telecallerId: foundTelecaller._id, databaseName, role: "telecaller" }, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
 
         res.status(200).json({ message: "Login successful", token });
     } catch (err) {

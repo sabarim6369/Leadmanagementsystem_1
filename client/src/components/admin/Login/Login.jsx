@@ -9,6 +9,7 @@ export default function LoginPage({ setUserRole }) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const[role,setRole]=useState("");
+  const [rememberMe, setRememberMe] = useState(false); 
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -42,7 +43,7 @@ export default function LoginPage({ setUserRole }) {
       if (role === "telecaller") {
         response = await axios.post(
           `${process.env.REACT_APP_API_URL}/telecaller/login`, 
-          { email, password, role },
+          { email, password, role,rememberMe },
           {
             headers: { database: database }, 
           }
@@ -51,7 +52,7 @@ export default function LoginPage({ setUserRole }) {
       else if (role === "admin") {
         response = await axios.post(
          `${process.env.REACT_APP_API_URL}/admin/login`, 
-          { email, password, role },
+          { email, password, role,rememberMe },
           {
             headers: { database: database }, 
           }
@@ -60,7 +61,7 @@ export default function LoginPage({ setUserRole }) {
       else if (role === "superadmin") {
         response = await axios.post(
           `${process.env.REACT_APP_API_URL}/superadmin/login`, 
-          { email, password, role },
+          { email, password, role,rememberMe },
           {
             headers: { database: database }, 
           }
@@ -160,8 +161,9 @@ export default function LoginPage({ setUserRole }) {
           </div>
           <div className="flex items-center justify-between">
             <label className="flex items-center text-sm text-gray-600">
-              <input type="checkbox" className="form-checkbox text-blue-500 mr-2" />
-              Remember me
+              <input type="checkbox" className="form-checkbox text-blue-500 mr-2"  checked={rememberMe}
+        onChange={(e) => setRememberMe(e.target.checked)} />
+              Remember me for 30 days
             </label>
             <a href="#" className="text-sm text-blue-500 hover:underline">
               Forgot password?

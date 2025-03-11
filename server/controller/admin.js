@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const {getDatabaseConnection} = require('../config/db'); 
 const telecallerschema=require("../schema/telecallerschema");
 const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password,rememberMe} = req.body;
 console.log(req.body)
     if (!email || !password) {
         return res.status(400).json({ message: "Please provide email and password." });
@@ -38,8 +38,8 @@ console.log(req.body)
         const databaseName = admin.databaseName;
 
        console.log("dd",databaseName)
-
-        const token = jwt.sign({ adminId: admin._id, databaseName ,role:"admin"}, process.env.JWT_SECRET, { expiresIn: '1h' });
+       
+        const token = jwt.sign({ adminId: admin._id, databaseName ,role:"admin"}, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
 
         res.status(200).json({ message: "Login successful", token,admindetails:admin});
     } catch (err) {

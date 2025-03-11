@@ -218,7 +218,7 @@ const Leads = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 ">
+    <div className="flex min-h-screen bg-gray-900">
       <div className="hidden lg:block lg:w-[250px]">
         <Sidebar />
       </div>
