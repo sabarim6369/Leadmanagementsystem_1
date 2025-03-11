@@ -223,10 +223,7 @@ const opennotes=(lead)=>{
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl text-white">Leads</h1>
           <div className="flex items-center gap-4">
-            <button
-              className="text-white cursor-pointer"
-              onClick={openmodel}
-            >
+            <button className="text-white cursor-pointer" onClick={openmodel}>
               <i className="fa fa-bars text-xl"></i>
             </button>
             <Toolmodal
@@ -234,7 +231,6 @@ const opennotes=(lead)=>{
               add={add}
               openImportPopup={openImportPopup}
               openassignleads={openassignleads}
-            
             />
           </div>
           {/* <div
@@ -259,12 +255,12 @@ const opennotes=(lead)=>{
             </div> */}
         </div>
 
-      <Searchbar
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        Status={Status}
-      setStatus={setStatus}
-      />
+        <Searchbar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          Status={Status}
+          setStatus={setStatus}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Leadscard
@@ -303,8 +299,6 @@ const opennotes=(lead)=>{
           type={"Telecaller"}
           adminid={adminid}
           telecallerid={telecallerid}
-
-
         />
       </div>
       <ToastContainer position="top-center" />

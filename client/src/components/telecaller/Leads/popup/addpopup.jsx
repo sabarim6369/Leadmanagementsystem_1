@@ -52,9 +52,9 @@ const Addpopup = ({ popup, setispopupopen, type,telecallerid }) => {
       if (response.status === 401) {
         toast.warning("Fill all fields");
       } 
-      toast.success("Telecaller added successfully");
+      toast.success("Leads added successfully");
 
-      // Reset form
+    
       setFormData({
         Name: "",
         Email: "",
