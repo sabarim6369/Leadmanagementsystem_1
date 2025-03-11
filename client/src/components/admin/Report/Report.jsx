@@ -2,7 +2,8 @@ import Sidebar from "../../../utils/sidebar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import decodeToken from "../../../utils/jwtdecode";
-
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable"; // Import autoTable explicitly
 const Report = () => {
   const [databaseName, setDatabaseName] = useState();
   const [rows, setRows] = useState([]);
@@ -29,7 +30,30 @@ const Report = () => {
     const array = Array(20).fill(null);
     setRows(array);
   }, []);
-
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text("Leads Report", 14, 20);
+  
+    const tableColumn = ["#", "Name", "Email", "Phone", "Status"];
+    const tableRows = leads.map((lead, index) => [
+      index + 1,
+      lead.name,
+      lead.email,
+      lead.mobilenumber,
+      lead.status,
+    ]);
+  
+    // Call autoTable correctly
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 30,
+    });
+  
+    doc.save("Leads_Report.pdf");
+  };
+  
+  
   const setViewModelOpen = async (leadId) => {
     const leadData = leads.find((lead) => lead._id === leadId);
     console.log(leadData);
@@ -53,6 +77,14 @@ const Report = () => {
         </div>
 
         <div className="flex-grow p-6 overflow-auto">
+        <button 
+  className="lg:absolute lg:top-6 lg:right-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 
+             right-4 top-2 flex ml-auto"
+  onClick={generatePDF}
+>
+  Generate Report
+</button>
+
           <div className="p-2 relative w-full max-w-md mb-8">
             <i className="fa fa-search text-2xl text-white absolute left-4 top-1/2 transform -translate-y-1/2"></i>
             <input

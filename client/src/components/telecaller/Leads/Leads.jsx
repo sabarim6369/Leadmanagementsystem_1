@@ -34,6 +34,7 @@ const TelecallersLeads = () => {
   const [leads, setLeads] = useState([]);
 const[telecallerid,settelecallerid]=useState("");
 const [searchQuery, setSearchQuery] = useState(""); 
+const[Status,setStatus]=useState("");
   const fetchLeads = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -195,9 +196,9 @@ const opennotes=(lead)=>{
     }
   };
   const filteredLeads = telecallerdata.filter(lead => 
-    lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (lead.mobilenumber && lead.mobilenumber.toString().includes(searchQuery))||
-    lead.email.includes(searchQuery)
+    lead.email.includes(searchQuery))&&(Status===""|| lead.status === Status)
   );
   
   if (loading1) {
@@ -246,7 +247,8 @@ const opennotes=(lead)=>{
       <Searchbar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-      options={options}
+        Status={Status}
+      setStatus={setStatus}
       />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
