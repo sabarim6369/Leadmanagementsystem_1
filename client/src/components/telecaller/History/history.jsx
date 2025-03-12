@@ -3,7 +3,10 @@ import Sidebar from "../../../utils/sidebar";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import useThemeStore from "../../store/themestore";
-
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // ✅ Import autoTable correctly
+import * as XLSX from "xlsx";
 const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString();
 };
@@ -12,6 +15,7 @@ const History = () => {
   const [telecallerId, setTelecallerId] = useState("");
   const [history, setHistory] = useState([]);
   const { isDarkTheme } = useThemeStore();
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,6 +39,50 @@ const History = () => {
     }
   }, []);
 
+  const handleDownload = async (type) => {
+    try {
+      if (type === "pdf") {
+        const doc = new jsPDF();
+        doc.text("History Report", 14, 10);
+  
+        const tableColumn = ["Lead Name", "Mobile", "Notes", "Callback", "Notes Taken At"];
+        const tableRows = history.map((item) => [
+          item.leadId?.name || "N/A",
+          item.leadId?.mobilenumber || "N/A",
+          item.notes || "No notes available",
+          item.callbackScheduled ? formatDate(item.callbackTime) : "No Callback",
+          formatDate(item.timestamp),
+        ]);
+  
+        autoTable(doc, {
+          head: [tableColumn],
+          body: tableRows,
+          startY: 20,
+        });
+  
+        doc.save("history_report.pdf");
+      } else if (type === "excel") {
+        const worksheet = XLSX.utils.json_to_sheet(
+          history.map((item) => ({
+            "Lead Name": item.leadId?.name || "N/A",
+            Mobile: item.leadId?.mobilenumber || "N/A",
+            Notes: item.notes || "No notes available",
+            Callback: item.callbackScheduled ? formatDate(item.callbackTime) : "No Callback",
+            "Notes Taken At": formatDate(item.timestamp),
+          }))
+        );
+  
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "History");
+        XLSX.writeFile(workbook, "history_report.xlsx");
+      }
+  
+      setShowDownloadModal(false);
+    } catch (error) {
+      console.error(`Error downloading ${type}:`, error);
+    }
+  };
+
   return (
     <div className={`flex h-screen ${isDarkTheme ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
       {/* Sidebar */}
@@ -44,9 +92,59 @@ const History = () => {
 
       {/* Main Content */}
       <div className="flex-grow p-6 overflow-auto">
-        <h1 className={`text-3xl font-semibold ${isDarkTheme ? 'text-gray-100 border-gray-700' : 'text-gray-900 border-gray-200'} border-b pb-2 mb-6`}>
-          History
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className={`text-3xl font-semibold ${isDarkTheme ? 'text-gray-100 border-gray-700' : 'text-gray-900 border-gray-200'}`}>
+            History
+          </h1>
+          
+          {/* Download Button */}
+          <div className="relative">
+            <button
+              onClick={() => setShowDownloadModal(!showDownloadModal)}
+              className={`p-2 rounded-full ${
+                isDarkTheme 
+                  ? 'hover:bg-gray-700 text-gray-200' 
+                  : 'hover:bg-gray-100 text-gray-600'
+              }`}
+            >
+              <ArrowDownTrayIcon className="h-6 w-6" />
+            </button>
+
+            {/* Download Modal */}
+            {showDownloadModal && (
+              <div 
+                className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg ${
+                  isDarkTheme 
+                    ? 'bg-gray-800 ring-1 ring-black ring-opacity-5' 
+                    : 'bg-white ring-1 ring-black ring-opacity-5'
+                }`}
+              >
+                <div className="py-1">
+                  <button
+                    onClick={() => handleDownload('pdf')}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      isDarkTheme 
+                        ? 'text-gray-200 hover:bg-gray-700' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    Download PDF
+                  </button>
+                  <button
+                    onClick={() => handleDownload('excel')}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      isDarkTheme 
+                        ? 'text-gray-200 hover:bg-gray-700' 
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    Download Excel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className={`${isDarkTheme ? 'bg-gray-800' : 'bg-white'} p-6 rounded-lg shadow-lg`}>
           <table className={`w-full border-collapse text-left ${isDarkTheme ? 'text-gray-200' : 'text-gray-900'}`}>
