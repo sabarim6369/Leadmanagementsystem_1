@@ -207,18 +207,19 @@ const[Status,setStatus]=useState("");
     }
   };
 
-  if (loading1) {
-    return (
-      <div className="flex min-h-screen bg-gray-900">
-        <div className="hidden lg:block lg:w-[250px]">
-          <Sidebar />
-        </div>
-        <div className="flex-1 flex justify-center items-center">
-          <HashLoader color="#36d7b7" size={100} />
-        </div>
+  
+if (loading1) {
+  return (
+    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="hidden lg:block lg:w-[250px]">
+        <Sidebar />
       </div>
-    );
-  }
+      <div className="flex-1 flex justify-center items-center">
+        <HashLoader color={isDarkTheme ? "#36d7b7" : "#1E293B"} size={100} />
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-100' }`}>
