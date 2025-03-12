@@ -1,3 +1,6 @@
+const express = require("express");
+const app = express();
+
 const Lead = require("../schema/leadschema");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -5,6 +8,36 @@ const Admin = require('../schema/Adminschema');
 const mongoose = require('mongoose');
 const {getDatabaseConnection} = require('../config/db'); 
 const telecallerschema=require("../schema/telecallerschema");
+const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(fileUpload());
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+const uploadToCloudinary = (fileBuffer, fileName) => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            { resource_type: "auto", public_id: `lead_files/${Date.now()}-${fileName}` },
+            (error, result) => {
+                if (error) {
+                    console.error("Cloudinary Upload Error:", error);
+                    return reject(new Error("Cloudinary Upload Failed"));
+                }
+                console.log("Cloudinary Upload Success:", result);
+                resolve({ fileUrl: result.secure_url, filename: fileName, uploadedAt: new Date() });
+            }
+        );
+        uploadStream.end(fileBuffer);
+    });
+};
+
+
+
 const login = async (req, res) => {
     const { email, password,rememberMe} = req.body;
 console.log(req.body)
@@ -38,8 +71,9 @@ console.log(req.body)
         const databaseName = admin.databaseName;
 
        console.log("dd",databaseName)
-       
-        const token = jwt.sign({ adminId: admin._id, databaseName ,role:"admin"}, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
+       const logo = admin.logo ? admin.logo : false;
+
+        const token = jwt.sign({ adminId: admin._id, databaseName ,role:"admin",logo }, process.env.JWT_SECRET, { expiresIn:rememberMe?'30d':'1d' });
 
         res.status(200).json({ message: "Login successful", token,admindetails:admin});
     } catch (err) {
@@ -47,6 +81,34 @@ console.log(req.body)
         res.status(500).json({ message: "Error logging in", error: err });
     }
     };
+    const addlogo = async (req, res) => {
+        try {
+            const { adminid } = req.body;
+            const Admin = req.db.model("Admin");
+    
+             console.log(req.body)
+            if (!req.files || !req.files.logo) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+    
+            const logoFile = req.files.logo;
+    
+            // Upload to Cloudinary
+            const result = await uploadToCloudinary(logoFile.data, logoFile.name);
+    
+            // Update admin's logo in the database
+            await Admin.findByIdAndUpdate(adminid, { logo: result.fileUrl });
+    
+            res.status(200).json({
+                message: "Logo uploaded successfully",
+                logoUrl: result.fileUrl,
+            });
+        } catch (error) {
+            console.error("Error uploading logo:", error);
+            res.status(500).json({ message: "Failed to upload logo", error });
+        }
+    };
+    
     const getadmindetails = async (req, res) => {
         try {
             const Telecaller = req.db.model("Telecaller");
@@ -686,5 +748,6 @@ module.exports = {
     getadmindetails,
     getstats,
     changepassword,
-    forceAssignLead
+    forceAssignLead,
+    addlogo
 };

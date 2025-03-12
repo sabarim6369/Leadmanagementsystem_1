@@ -28,6 +28,10 @@
         leads:{
             type:Number,
             default:0
+        },
+        logo: {
+            type: String, 
+              
         }
     })
     module.exports = Adminschema;

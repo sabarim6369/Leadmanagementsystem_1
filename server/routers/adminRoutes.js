@@ -13,12 +13,14 @@ const {
   getadmindetails,
   getstats,
   changepassword,
-  forceAssignLead 
+  forceAssignLead,
+  addlogo 
 } = require("../controller/admin");
 
 const router = express.Router();
 
-router.post("/login", (req,res)=>login(req,res,req.db));;
+router.post("/login", (req,res)=>login(req,res,req.db));
+router.post("/addlogo", (req,res)=>addlogo(req,res,req.db));
 router.get("/getalltelecaller",(req,res)=>getalltelecaller(req,res,req.db));
 router.get("/getallleads",(req,res)=>getallleads(req,res,req.db));
 router.post("/add", (req, res) => addtelecaller(req, res, req.db));

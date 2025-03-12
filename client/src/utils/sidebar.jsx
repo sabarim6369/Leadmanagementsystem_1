@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import useThemeStore from '../components/store/themestore';
+import axios from 'axios';
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [role, setrole] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const { isDarkTheme, toggleTheme } = useThemeStore();
-    
+    const [logo, setLogo] = useState(null);
+    const fileInputRef = useRef(null);
+    const[databasename,setdatabasename]=useState();
+    const[adminid,setadminid]=useState();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,6 +24,9 @@ const Sidebar = () => {
             try {
                 const decodedToken = jwtDecode(token);
                 setrole(decodedToken.role);
+                setLogo(decodedToken.logo);
+                setdatabasename(decodedToken.databaseName)
+                setadminid(decodedToken.adminId);
             } catch (error) {
                 console.error("Invalid token:", error);
                 localStorage.removeItem("token");
@@ -37,6 +44,45 @@ const Sidebar = () => {
     const togglesidebar = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleLogoClick = () => {
+        fileInputRef.current?.click();
+    };
+    useEffect(() => {
+        const storedLogo = localStorage.getItem("logo");
+        if (storedLogo) {
+            setLogo(storedLogo);
+        }
+    }, []);
+    const handleLogoChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+    
+        const formData = new FormData();
+        formData.append("logo", file);
+        formData.append("adminid", adminid);
+    
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/admin/addlogo`, 
+                formData,  
+                {
+                    headers: {
+                        database: "superadmin", 
+                    },
+                }
+            );
+    
+            console.log("Uploaded Logo URL:", response.data.logoUrl);
+    
+            setLogo(response.data.logoUrl);  
+            localStorage.setItem("logo", response.data.logoUrl);  // Store in localStorage
+    
+        } catch (error) {
+            console.error("Error uploading logo:", error);
+        }
+    };
+    
 
     const[select,setselect]=useState(()=>{
         const path=window.location.pathname;
@@ -121,6 +167,48 @@ const Sidebar = () => {
                         isOpen ? 'transform-none w-[160px]' : '-translate-x-full'
                     } lg:translate-x-0 border-r ${isDarkTheme ? 'border-gray-500' : 'border-gray-200'}`}
                 >
+                    <div className="flex justify-center items-center pt-4 relative">
+                    <div 
+    className="relative cursor-pointer group"
+    onClick={role === "admin" ? handleLogoClick : undefined} // Only clickable for admin
+>
+    {logo ? (
+        // If logo exists, show it
+        <img 
+            src={logo} 
+            alt="Logo" 
+            className="w-16 h-16 rounded-full object-cover"
+        />
+    ) : (
+        // If no logo, show a placeholder with a pen icon only for admin
+        <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center relative">
+            <i className="fas fa-user text-gray-600 text-2xl"></i>
+            {role === "admin" && (
+                <div className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full">
+                    <i className="fas fa-pen"></i>
+                </div>
+            )}
+        </div>
+    )}
+    
+    {/* Overlay effect on hover for editing (Only if role is admin) */}
+    {logo && role === "admin" && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+            <i className="fas fa-camera text-white"></i>
+        </div>
+    )}
+</div>
+
+    
+    <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={handleLogoChange}
+    />
+</div>
+
                     <div className="absolute top-4 right-4">
                         <button
                             onClick={toggleTheme}
@@ -130,7 +218,7 @@ const Sidebar = () => {
                         </button>
                     </div>
 
-                    <div className="absolute top-20 left-5 flex flex-col space-y-10">
+                    <div className="absolute top-20 left-5 flex flex-col space-y-10 mt-5">
                         {role=="superadmin" && <div onClick={()=>setselect(10)} className={`flex items-center cursor-pointer ${select===10?'bg-mint-green p-3 rounded': isDarkTheme ? 'text-white' : 'text-gray-800'}`}>
                             <i className={`fas fa-cogs fa-2x mr-4 ${select===10?'text-black': isDarkTheme ? 'text-grey' : 'text-gray-600'}`}></i>
                             <h2 className={`text-2xl ${select===10?'font-bold text-black': isDarkTheme ? 'text-white' : 'text-gray-800'}`}>Dashboard</h2>

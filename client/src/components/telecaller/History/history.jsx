@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import useThemeStore from "../../store/themestore";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // ✅ Import autoTable correctly
+import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString();
