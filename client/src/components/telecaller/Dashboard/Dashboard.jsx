@@ -8,12 +8,15 @@ import Callinsights from './Callinsights';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import HashLoader from "react-spinners/HashLoader";
+import useThemeStore from '../../store/themestore';
 
 const TelecallersDashboard = () => {
   const [telecallerid, setTelecallerId] = useState("");
   const [databaseName, setDatabaseName] = useState("");
   const[telecallerdata,settelecallerdata]=useState(null);
   const[dailystats,setdailystats]=useState(null);
+  const { isDarkTheme } = useThemeStore();
+
     useEffect(() => {
       const token = localStorage.getItem("token");
       if (token) {
@@ -48,7 +51,8 @@ const TelecallersDashboard = () => {
     }
   }, [telecallerid, databaseName]);
   if (!telecallerdata || !dailystats) {
-    return   <div className="flex h-screen bg-gray-900">
+    return    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-white'}`}>
+
     <div className="lg:w-[250px] w-0">
       <Sidebar />
     </div><div className="flex-1 flex justify-center items-center">
@@ -57,34 +61,40 @@ const TelecallersDashboard = () => {
     </div>;
   }
   return (
-    <div className="flex h-screen bg-gray-900">
+    <div  className={`flex min-h-screen ${
+      isDarkTheme ? "bg-gray-900" : "bg-gray-100"
+    }`}>
       <div className="lg:w-[250px] w-0">
         <Sidebar />
       </div>
 
       <div className="flex-grow p-4 md:p-6 overflow-auto">
         <div className="p-2 relative w-full max-w-[500px]">
-          <i className="fa fa-search text-2xl text-white absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+          <i   className={`fa fa-search text-2xl absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                isDarkTheme ? "text-white" : "text-black"
+              }`}></i>
           <input
-            className="p-2 pl-12 rounded-xl bg-gray-700 text-white w-full"
-            placeholder="Search here..."
+className={`p-2 pl-12 rounded-xl w-full ${
+  isDarkTheme ? "bg-gray-700 text-white" : "bg-white text-black"
+}`}            placeholder="Search here..."
           />
         </div>
         <div className="flex flex-col lg:flex-row w-full gap-4">
             <Todayscalls
             telecallerdata={telecallerdata}
             dailystats={dailystats}
+            isDarkTheme={isDarkTheme}
             />
-          <Fullfilment />
+          <Fullfilment isDarkTheme={isDarkTheme}/>
         </div>
 
         <div className="flex flex-col lg:flex-row w-full mt-4 gap-4">
-          <Toptelecallers />
+          <Toptelecallers isDarkTheme={isDarkTheme}/>
         </div>
 
         <div className="flex flex-col lg:flex-row w-full gap-4 mt-4">
-          <LeadStatus />
-          <Callinsights />
+          <LeadStatus isDarkTheme={isDarkTheme}/>
+          <Callinsights isDarkTheme={isDarkTheme}/>
         </div>
       </div>
     </div>

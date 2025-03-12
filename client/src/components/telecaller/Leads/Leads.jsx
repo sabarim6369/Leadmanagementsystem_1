@@ -197,7 +197,7 @@ const TelecallersLeads = () => {
 
   if (loading1) {
     return (
-      <div className="flex min-h-screen bg-gray-900">
+      <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="hidden lg:block lg:w-[250px]">
           <Sidebar />
         </div>

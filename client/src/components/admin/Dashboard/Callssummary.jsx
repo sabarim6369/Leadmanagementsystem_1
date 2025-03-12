@@ -15,46 +15,66 @@ const Callssummary = ({ stats, isDarkTheme }) => {
         >
           Today's Calls
         </h3>
-        <h4 className={`${isDarkTheme ? "text-gray-300" : "text-gray-700"} mt-2`}>
+        <h4
+          className={`${isDarkTheme ? "text-gray-300" : "text-gray-700"} mt-2`}
+        >
           Call summary
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
-        <div className={`rounded-2xl p-4 ${isDarkTheme ? "bg-gray-900" : "bg-gray-200"} shadow-lg`}>
-  <div className="mt-5 ml-6">
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M39 10L20 1L1 10V30L20 39L39 30V10Z"
-        stroke="#FEB95A"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-      <g transform="translate(10, 13)">
-        <path
-          d="M1 7.5V10M10 5V10V5ZM19 1V10V1Z"
-          stroke="#FEB95A"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </g>
-    </svg>
-  </div>
-  <div className="ml-6 mt-7 space-y-2">
-    <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold text-2xl`}>
-      {stats.totalCalls}
-    </div>
-    <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold`}>Total calls</div>
-    <div className="text-yellow-600">+10% from yesterday</div>
-  </div>
-</div>
+          <div
+            className={`rounded-2xl p-4 ${
+              isDarkTheme ? "bg-gray-900" : "bg-gray-200"
+            } shadow-lg`}
+          >
+            <div className="mt-5 ml-6">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M39 10L20 1L1 10V30L20 39L39 30V10Z"
+                  stroke="#FEB95A"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+                <g transform="translate(10, 13)">
+                  <path
+                    d="M1 7.5V10M10 5V10V5ZM19 1V10V1Z"
+                    stroke="#FEB95A"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+              </svg>
+            </div>
+            <div className="ml-6 mt-7 space-y-2">
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold text-2xl`}
+              >
+                {stats.totalCalls}
+              </div>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold`}
+              >
+                Total calls
+              </div>
+              <div className="text-yellow-600">+10% from yesterday</div>
+            </div>
+          </div>
 
-          <div className={`rounded-2xl p-4 ${isDarkTheme ? "bg-gray-900" : "bg-gray-200"} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-4 ${
+              isDarkTheme ? "bg-gray-900" : "bg-gray-200"
+            } shadow-lg`}
+          >
             <div className="mt-5 ml-6">
               <svg
                 width="40"
@@ -70,16 +90,32 @@ const Callssummary = ({ stats, isDarkTheme }) => {
               </svg>
             </div>
             <div className="ml-6 mt-7 space-y-2">
-            <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold text-2xl`}>
-              {stats.answeredCalls}
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold text-2xl`}
+              >
+                {stats.answeredCalls}
               </div>
-              <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold`}>Answered</div>
-              <div className={`${isDarkTheme ? "text-blue-200" : "text-blue-600"}`}>
-  +8% from yesterday
-</div>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold`}
+              >
+                Answered
+              </div>
+              <div
+                className={`${isDarkTheme ? "text-blue-200" : "text-blue-600"}`}
+              >
+                +8% from yesterday
+              </div>
             </div>
           </div>
-          <div className={`rounded-2xl p-4 ${isDarkTheme ? "bg-gray-900" : "bg-gray-200"} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-4 ${
+              isDarkTheme ? "bg-gray-900" : "bg-gray-200"
+            } shadow-lg`}
+          >
             <div className="mt-5 ml-6">
               <svg
                 width="55"
@@ -95,15 +131,32 @@ const Callssummary = ({ stats, isDarkTheme }) => {
               </svg>
             </div>
             <div className="ml-6 mt-7 space-y-2">
-            <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold text-2xl`}>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold text-2xl`}
+              >
                 {stats.notAnsweredCalls}
               </div>
-              <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold`}>Not answered</div>
-              <div className={`${isDarkTheme ? "text-rose-200" : "text-rose-600"}`}>
-              +2% from yesterday</div>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold`}
+              >
+                Not answered
+              </div>
+              <div
+                className={`${isDarkTheme ? "text-rose-200" : "text-rose-600"}`}
+              >
+                +2% from yesterday
+              </div>
             </div>
           </div>
-          <div className={`rounded-2xl p-4 ${isDarkTheme ? "bg-gray-900" : "bg-gray-200"} shadow-lg`}>
+          <div
+            className={`rounded-2xl p-4 ${
+              isDarkTheme ? "bg-gray-900" : "bg-gray-200"
+            } shadow-lg`}
+          >
             <div className="mt-5 ml-6">
               <svg
                 width="40"
@@ -135,10 +188,20 @@ const Callssummary = ({ stats, isDarkTheme }) => {
               </svg>
             </div>
             <div className="ml-6 mt-5 space-y-2">
-            <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold text-2xl`}>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold text-2xl`}
+              >
                 {stats.confirmed}
               </div>
-              <div className={`${isDarkTheme ? "text-white" : "text-black"} font-bold`}>Confirmed</div>
+              <div
+                className={`${
+                  isDarkTheme ? "text-white" : "text-black"
+                } font-bold`}
+              >
+                Confirmed
+              </div>
               <div className="text-blue-600">+3% from yesterday</div>
             </div>
           </div>
