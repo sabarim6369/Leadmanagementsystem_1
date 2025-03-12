@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Viewmore from './popup/viewmore';
 import Assignlead from './popup/assignlead';
 import Searchbar from './headersection/searchbar';
+import useThemeStore from '../../store/themestore';
 
 const Leads = () => {
   const [opentools, setopentools] = useState(false);
@@ -28,6 +29,7 @@ const Leads = () => {
   const [availabletelecallers, setavailabletelecallers] = useState([]);
   const [leadassignpopup, setleadassignpopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const { isDarkTheme } = useThemeStore();
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -219,28 +221,31 @@ const[Status,setStatus]=useState("");
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 ">
+    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-100' }`}>
       <div className="hidden lg:block lg:w-[250px]">
         <Sidebar />
       </div>
       <div className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
-          <h1 className="text-2xl md:text-3xl text-white mb-4 sm:mb-0">Leads</h1>
-          <div className="flex items-center gap-4">
-            <button
-              className="text-white cursor-pointer"
-              onClick={openmodel}
-            >
-              <i className="fa fa-bars text-xl"></i>
-            </button>
-            <Toolmodal
-              opentools={opentools}
-              add={add}
-              openImportPopup={openImportPopup}
-              openassignleads={openassignleads}
-              swapleads={swapleads}
-            />
-          </div>
+        <h1 className={`text-2xl md:text-3xl mb-4 sm:mb-0 ${isDarkTheme ? "text-white" : "text-black"}`}>
+  Leads
+</h1>
+<div className="flex items-center gap-4">
+  <button
+    className={`${isDarkTheme ? "text-white" : "text-black"} cursor-pointer`}
+    onClick={openmodel}
+  >
+    <i className="fa fa-bars text-xl"></i>
+  </button>
+  <Toolmodal
+    opentools={opentools}
+    add={add}
+    openImportPopup={openImportPopup}
+    openassignleads={openassignleads}
+    swapleads={swapleads}
+  />
+</div>
+
         </div>
 
         <div className="mb-6">
@@ -248,60 +253,64 @@ const[Status,setStatus]=useState("");
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             Status={Status}
-            setStatus={setStatus}          />
+            setStatus={setStatus}   
+            isDarkTheme={isDarkTheme} 
+            
+            />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredLeads.map((telecaller, index) => (
-            <div
-              key={telecaller._id || index}
-              className="bg-gray-800 rounded-2xl shadow-lg p-4 flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-semibold text-white truncate">
-                  {telecaller.name}
-                </h2>
-                <div className="px-2 py-1 bg-green-500 text-xs md:text-sm text-white rounded-lg">
-                  {telecaller.status}
-                </div>
-              </div>
-
-              <div className="space-y-3 mb-4 flex-grow">
-                <div className="flex items-center text-gray-300">
-                  <i className="fa fa-map-marker-alt text-blue-400 text-lg mr-2"></i>
-                  <p className="truncate text-sm">
-                    {telecaller.address || "No address available"}
-                  </p>
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <i className="fa fa-phone-alt text-blue-400 text-lg mr-2"></i>
-                  <p className="text-sm">+{telecaller.mobilenumber}</p>
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <i className="fa fa-envelope text-blue-400 text-lg mr-2"></i>
-                  <p className="text-sm truncate">
-                    Assigned To: {telecaller.assignedTo?.[0]?.email || "Not Assigned"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-2 mt-auto">
-                <button
-                  className="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-300"
-                  onClick={() => viewmore(telecaller)}
-                >
-                  View More
-                </button>
-                <button
-                  className="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-300"
-                  onClick={() => Assignleads(telecaller._id)}
-                >
-                  Assign
-                </button>
-              </div>
-            </div>
-          ))}
+  {filteredLeads.map((telecaller, index) => (
+    <div
+      key={telecaller._id || index}
+      className={`rounded-2xl shadow-lg p-4 flex flex-col ${
+        isDarkTheme ? "bg-gray-800 text-white" : "bg-white text-black"
+      }`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h2 className={`text-lg md:text-xl font-semibold truncate ${isDarkTheme ? "text-white" : "text-black"}`}>
+          {telecaller.name}
+        </h2>
+        <div className="px-2 py-1 bg-green-500 text-xs md:text-sm text-white rounded-lg">
+          {telecaller.status}
         </div>
+      </div>
+
+      <div className="space-y-3 mb-4 flex-grow">
+        <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+          <i className="fa fa-map-marker-alt text-blue-400 text-lg mr-2"></i>
+          <p className="truncate text-sm">{telecaller.address || "No address available"}</p>
+        </div>
+        <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+          <i className="fa fa-phone-alt text-blue-400 text-lg mr-2"></i>
+          <p className="text-sm">+{telecaller.mobilenumber}</p>
+        </div>
+        <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+          <i className="fa fa-envelope text-blue-400 text-lg mr-2"></i>
+          <p className="text-sm truncate">
+            Assigned To: {telecaller.assignedTo?.[0]?.email || "Not Assigned"}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+        <button
+          className="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-300"
+          onClick={() => viewmore(telecaller)}
+        >
+          View More
+        </button>
+        <button
+          className="flex-1 py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition duration-300"
+          onClick={() => Assignleads(telecaller._id)}
+        >
+          Assign
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
 
         {selectedtelecaller && (
           <Viewmore

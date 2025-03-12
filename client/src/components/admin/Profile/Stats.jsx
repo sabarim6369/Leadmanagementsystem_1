@@ -1,7 +1,7 @@
 import React from 'react';
 import StatsCard from './StatsCard';
 
-const Stats = ({ totaltelcaller, leadcount }) => {
+const Stats = ({ totaltelcaller, leadcount,isDarkTheme }) => {
   const statsData = [
     {
       icon: (
@@ -41,7 +41,7 @@ const Stats = ({ totaltelcaller, leadcount }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
       {statsData.map((stat, index) => (
-        <StatsCard key={index} {...stat} />
+        <StatsCard key={index} {...stat} isDarkTheme={isDarkTheme}/>
       ))}
     </div>
   );
