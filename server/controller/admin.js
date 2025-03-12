@@ -288,6 +288,49 @@ const assignleads = async (req, res) => {
         res.status(500).json({ message: "Error assigning lead", error: err.message });
     }
 };
+const forceAssignLead = async (req, res) => {
+    try {
+        const { telecallerId, leadId } = req.body;
+
+        if (!telecallerId || !leadId) {
+            return res.status(400).json({ message: "Please provide telecaller ID and lead ID." });
+        }
+
+        const Telecaller = req.db.model("Telecaller");
+        const Lead = req.db.model("Lead");
+
+        const telecaller = await Telecaller.findById(telecallerId);
+        if (!telecaller) {
+            return res.status(404).json({ message: "Telecaller not found." });
+        }
+
+        const lead = await Lead.findById(leadId);
+        if (!lead) {
+            return res.status(404).json({ message: "Lead not found." });
+        }
+
+        // Remove lead from previous telecaller(s)
+        await Telecaller.updateMany(
+            { _id: { $in: lead.assignedTo } },
+            { $pull: { leads: lead._id }, $inc: { pending: -1 } }
+        );
+
+        // Assign to the new telecaller
+        telecaller.leads.push(lead._id);
+        telecaller.pending += 1;
+        await telecaller.save();
+
+        lead.assignedTo = [telecaller._id]; // Override previous assignments
+        lead.status = "assigned";
+        await lead.save();
+
+        res.status(200).json({ message: "Lead reassigned successfully." });
+    } catch (err) {
+        console.error("Error reassigning lead:", err);
+        res.status(500).json({ message: "Error reassigning lead", error: err.message });
+    }
+};
+
 const swapleads = async (req, res) => {
     console.log("Starting lead redistribution process...");
 
@@ -642,5 +685,6 @@ module.exports = {
     assignallleads,
     getadmindetails,
     getstats,
-    changepassword
+    changepassword,
+    forceAssignLead
 };

@@ -104,20 +104,48 @@ const Leads = () => {
 
   const assignleadwithtelecaller = async (telecallerid) => {
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/admin/assign-leads`,
-        { telecallerId: telecallerid, leadId: selectedleadforassignment },
-        { headers: { "database": databasename } }
-      );
+        const response = await axios.put(
+            `${process.env.REACT_APP_API_URL}/admin/assign-leads`,
+            { telecallerId: telecallerid, leadId: selectedleadforassignment },
+            { headers: { "database": databasename } }
+        );
 
-      toast.success("Lead assigned successfully!");
-      await fetchLeads();
-      setleadassignpopup(false);
+        toast.success("Lead assigned successfully!");
+        await fetchLeads();
+        setleadassignpopup(false);
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Error assigning lead");
+        console.error(error);
+
+        const errorMessage = error.response?.data?.message || "Error assigning lead";
+
+        if (errorMessage.includes("Lead is already assigned")) {
+            const confirmReassign = window.confirm(
+                `${errorMessage}\nDo you want to reassign this lead to the selected telecaller?`
+            );
+
+            if (confirmReassign) {
+                try {
+                    // Call API again to forcefully reassign the lead
+                    await axios.put(
+                        `${process.env.REACT_APP_API_URL}/admin/forceassign-leads`,
+                        { telecallerId: telecallerid, leadId: selectedleadforassignment },
+                        { headers: { "database": databasename } }
+                    );
+
+                    toast.success("Lead reassigned successfully!");
+                    await fetchLeads();
+                    setleadassignpopup(false);
+                } catch (reassignError) {
+                    console.error(reassignError);
+                    toast.error("Error reassigning lead.");
+                }
+            }
+        } else {
+            toast.error(errorMessage);
+        }
     }
-  };
+};
+
 
   const Assignleads = async (telecallerid) => {
     setleadassignpopup(true);

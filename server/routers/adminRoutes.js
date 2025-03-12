@@ -12,7 +12,8 @@ const {
   assignallleads,
   getadmindetails,
   getstats,
-  changepassword
+  changepassword,
+  forceAssignLead 
 } = require("../controller/admin");
 
 const router = express.Router();
@@ -24,6 +25,7 @@ router.post("/add", (req, res) => addtelecaller(req, res, req.db));
 router.patch("/update/:telecallerId", (req, res) => updatetelecaller(req, res, req.db));
 router.delete("/delete/:telecallerId", (req, res) => deletetelecaller(req, res, req.db));
 router.put("/assign-leads", (req, res) => assignleads(req, res, req.db));
+router.put("/forceassign-leads", (req, res) => forceAssignLead (req, res, req.db));
 router.put("/swapallleads", (req, res) => swapleads(req, res, req.db));
 router.post("/addleads", (req, res) => addleads(req, res, req.db));
 router.put("/assignallleads",(req,res)=>assignallleads(req,res,req.db));
