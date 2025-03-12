@@ -4,7 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
+const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename,isDarkTheme }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -74,11 +74,12 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
       {telecallerdata.map((telecaller, index) => (
         <div
           key={telecaller._id || index}
-          className="bg-gray-800 rounded-2xl shadow-lg p-4 flex flex-col h-full"
-        >
+          className={`rounded-2xl shadow-lg p-4 flex flex-col ${
+            isDarkTheme ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}        >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg md:text-xl font-semibold text-white truncate">
-              {telecaller.name}
+          <h2 className={`text-lg md:text-xl font-semibold truncate ${isDarkTheme ? "text-white" : "text-black"}`}>
+          {telecaller.name}
             </h2>
             <div className="px-2 py-1 bg-green-500 text-xs md:text-sm text-white rounded-lg whitespace-nowrap">
               {telecaller.status === "assigned" ? "Pending" : telecaller.status}
@@ -86,18 +87,18 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename }) => {
           </div>
 
           <div className="space-y-2 mb-4 flex-grow">
-            <div className="flex items-center text-gray-300">
-              <i className="fa fa-map-marker-alt text-blue-400 text-base md:text-lg mr-2"></i>
+          <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+          <i className="fa fa-map-marker-alt text-blue-400 text-base md:text-lg mr-2"></i>
               <p className="truncate text-sm md:text-base">
                 {telecaller.address || "No address available"}
               </p>
             </div>
-            <div className="flex items-center text-gray-300">
-              <i className="fa fa-phone-alt text-blue-400 text-base md:text-lg mr-2"></i>
+            <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+            <i className="fa fa-phone-alt text-blue-400 text-base md:text-lg mr-2"></i>
               <p className="text-sm md:text-base">+{telecaller.mobilenumber}</p>
             </div>
-            <div className="flex items-center text-gray-300">
-              <i className="fa fa-envelope text-blue-400 text-base md:text-lg mr-2"></i>
+            <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
+            <i className="fa fa-envelope text-blue-400 text-base md:text-lg mr-2"></i>
               <p className="truncate text-sm md:text-base">{telecaller.email}</p>
             </div>
           </div>

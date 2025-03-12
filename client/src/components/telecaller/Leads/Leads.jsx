@@ -14,6 +14,7 @@ import Notes from './popup/Notes';
 import Leadscard from './leadcards/leads';
 import Searchbar from './headersection/searchbar';
 import { jwtDecode } from "jwt-decode";
+import useThemeStore from "../../store/themestore";
 
 const TelecallersLeads = () => {
   const [opentools, setopentools] = useState(false);
@@ -31,6 +32,7 @@ const TelecallersLeads = () => {
   const [telecallerid, settelecallerid] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [Status, setStatus] = useState("");
+  const { isDarkTheme } = useThemeStore();
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -207,17 +209,18 @@ const TelecallersLeads = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900">
+    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-100' }`}>
       <div className="hidden lg:block lg:w-[250px]">
         <Sidebar />
       </div>
       <div className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-          <h1 className="text-2xl md:text-3xl text-white mb-4 md:mb-0">Leads</h1>
+        <h1 className={`text-2xl md:text-3xl mb-4 sm:mb-0 ${isDarkTheme ? "text-white" : "text-black"}`}>
+        Leads</h1>
           <div className="flex items-center gap-4">
             <button 
-              className="text-white p-2 rounded-lg hover:bg-gray-800 transition-colors"
-              onClick={openmodel}
+    className={`${isDarkTheme ? "text-white" : "text-black"} cursor-pointer`}
+    onClick={openmodel}
             >
               <i className="fa fa-bars text-xl"></i>
             </button>
@@ -236,6 +239,7 @@ const TelecallersLeads = () => {
             setSearchQuery={setSearchQuery}
             Status={Status}
             setStatus={setStatus}
+            isDarkTheme={isDarkTheme} 
           />
         </div>
 
@@ -245,6 +249,8 @@ const TelecallersLeads = () => {
             viewmore={viewmore}
             opennotes={opennotes}
             databasename={databasename}
+            isDarkTheme={isDarkTheme} 
+
           />
         </div>
 
