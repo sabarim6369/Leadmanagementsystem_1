@@ -330,7 +330,7 @@ if (loading1) {
         </div>
         <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
           <i className="fa fa-phone-alt text-blue-400 text-lg mr-2"></i>
-          <p className="text-sm">+{telecaller.mobilenumber}</p>
+          <p className="text-sm">+91 {telecaller.mobilenumber}</p>
         </div>
         <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
           <i className="fa fa-envelope text-blue-400 text-lg mr-2"></i>

@@ -12,7 +12,7 @@ const Viewmore = ({selectedtelecaller,closeModal}) => {
           <strong>Email:</strong> {selectedtelecaller.email}
         </p>
         <p className="text-lg text-gray-600">
-          <strong>Phone:</strong> +{selectedtelecaller.mobilenumber}
+          <strong>Phone:</strong> +91 {selectedtelecaller.mobilenumber}
         </p>
         <p className="text-lg text-gray-600">
           <strong>Address:</strong>{" "}

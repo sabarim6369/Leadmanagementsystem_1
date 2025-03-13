@@ -95,7 +95,7 @@ const Leadscard = ({ telecallerdata, viewmore, opennotes, databasename,isDarkThe
             </div>
             <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
             <i className="fa fa-phone-alt text-blue-400 text-base md:text-lg mr-2"></i>
-              <p className="text-sm md:text-base">+{telecaller.mobilenumber}</p>
+              <p className="text-sm md:text-base">+91 {telecaller.mobilenumber}</p>
             </div>
             <div className={`flex items-center ${isDarkTheme ? "text-gray-300" : "text-gray-600"}`}>
             <i className="fa fa-envelope text-blue-400 text-base md:text-lg mr-2"></i>
