@@ -167,7 +167,7 @@ const Sidebar = () => {
                         isOpen ? 'transform-none w-[160px]' : '-translate-x-full'
                     } lg:translate-x-0 border-r ${isDarkTheme ? 'border-gray-500' : 'border-gray-200'}`}
                 >
-                    <div className="flex justify-center items-center pt-4 relative">
+            {role!=="superadmin"   &&     <div className="flex justify-center items-center pt-4 relative">
                     <div 
     className="relative cursor-pointer group"
     onClick={role === "admin" ? handleLogoClick : undefined} // Only clickable for admin
@@ -207,7 +207,7 @@ const Sidebar = () => {
         accept="image/*"
         onChange={handleLogoChange}
     />
-</div>
+</div>}
 
                     <div className="absolute top-4 right-4">
                         <button
