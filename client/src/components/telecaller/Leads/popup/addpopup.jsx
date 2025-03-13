@@ -21,75 +21,68 @@ const Addpopup = ({ popup, setispopupopen, type,telecallerid }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Authentication token missing!");
-        return;
-      }
-
-      const tokenvalidation = decodeToken(token);
-      const adminId = tokenvalidation.adminId;
-      const databaseName = tokenvalidation.databaseName;
-
-      if (!adminId) {
-        toast.error("Admin ID is missing!");
-        return;
-      }
-
-      console.log("Admin ID:", adminId, "Database Name:", databaseName);
-
-      // Update form data with adminId
-      const updatedFormData = { ...formData, adminId };
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/telecaller/addLeadsFromTelecaller`,
-        { leadsData: [updatedFormData],adminid:adminId,telecallerId:telecallerid }, // No need to spread adminId separately
-        {
-          headers: {
-            "database": databaseName
-          }
+        const token = localStorage.getItem("token");
+        if (!token) {
+            toast.error("Authentication token missing!");
+            return;
         }
-      );
-      if (response.status === 401) {
-        toast.warning("Fill all fields");
-      } 
-      toast.success("Leads added successfully");
 
-    window.location.reload();
-      setFormData({
-        Name: "",
-        Email: "",
-        Phone: "",
-        City: "",
-        adminId: ""
-      });
+        const tokenvalidation = decodeToken(token);
+        const adminId = tokenvalidation.adminId;
+        const databaseName = tokenvalidation.databaseName;
 
-      setTimeout(() => {
-        setispopupopen(false);
-      }, 2000);
-      if (response.status === 401) {
-        toast.warning("Fill all fields");
-      } else if (response.status === 402) {
-        toast.warning("Leads with this email already exists.");
-      } else if (response.status === 200) {
-        toast.success("Leads added successfully");
+        if (!adminId) {
+            toast.error("Admin ID is missing!");
+            return;
+        }
 
-        // Reset form
-        setFormData({
-          Name: "",
-          Email: "",
-          Phone: "",
-          City: "",
-          adminId: ""
-        });
+        console.log("Admin ID:", adminId, "Database Name:", databaseName);
 
-        setTimeout(() => {
-          setispopupopen(false);
-        }, 2000);
-      }
+        const updatedFormData = { ...formData, adminId };
+
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/telecaller/addLeadsFromTelecaller`,
+            { leadsData: [updatedFormData], adminid: adminId, telecallerId: telecallerid },
+            {
+                headers: {
+                    "database": databaseName
+                }
+            }
+        );
+
+        if (response.status === 201) {
+            toast.success(`${response.data.totalLeadsInserted} lead(s) added successfully.`);
+            window.location.reload();
+            setFormData({
+                Name: "",
+                Email: "",
+                Phone: "",
+                City: "",
+                adminId: ""
+            });
+
+            setTimeout(() => {
+                setispopupopen(false);
+            }, 2000);
+        } else {
+            toast.warning(response.data?.message || "Unexpected response.");
+        }
+
     } catch (error) {
-      toast.error("Error adding telecaller: " + error.message);
+        if (error.response) {
+            if (error.response.status === 400) {
+                toast.warning(error.response.data.message || "Please fill in all required fields.");
+            } else if (error.response.status === 409) {
+                toast.warning("Lead with this email or phone number already exists.");
+            } else {
+                toast.error("Error adding lead: " + error.response.data.message);
+            }
+        } else {
+            toast.error("Network error. Please check your connection.");
+        }
     }
-  };
+};
+;
 
   return (
     popup && (

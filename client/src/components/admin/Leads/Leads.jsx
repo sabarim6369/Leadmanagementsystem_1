@@ -219,21 +219,39 @@ const[Status,setStatus]=useState("");
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/admin/addleads`,
         { leadsData: allImportedData, adminid },
-        { headers: { "database": databasename } }
+        { headers: { database: databasename } }
       );
-
+  
       if (response.status === 201) {
-        toast.success("Leads uploaded successfully!");
+        if (response.data.totalLeadsInserted === 0) {
+          toast.info("No new leads to insert.");
+        } else {
+          toast.success(`${response.data.totalLeadsInserted} leads uploaded successfully!`);
+        }
         closeImportPopup();
         await fetchLeads();
       } else {
-        toast.error("Unexpected response from server.");
+        toast.error(response.data?.message || "Unexpected response from server.");
       }
     } catch (err) {
       console.error("Error uploading leads:", err);
-      toast.error(err.response?.data?.message || "Error uploading leads. Please try again.");
+      
+      if (err.response) {
+        // Handling specific errors from the server
+        if (err.response.status === 400) {
+          toast.warning(err.response.data?.message || "Invalid data format.");
+        } else if (err.response.status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else {
+          toast.error(err.response.data?.message || "Error uploading leads.");
+        }
+      } else {
+        // Network or unknown error
+        toast.error("Network error. Please check your connection.");
+      }
     }
   };
+  
 
   
 if (loading1) {

@@ -330,12 +330,10 @@ const addLeadsFromTelecaller = async (req, res) => {
         const { leadsData, adminid, telecallerId } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(adminid)) {
-            console.log("Invalid adminid:", adminid);
             return res.status(400).json({ message: "Invalid Admin ID" });
         }
 
         if (!mongoose.Types.ObjectId.isValid(telecallerId)) {
-            console.log("Invalid telecallerId:", telecallerId);
             return res.status(400).json({ message: "Invalid Telecaller ID" });
         }
 
@@ -343,7 +341,29 @@ const addLeadsFromTelecaller = async (req, res) => {
             return res.status(400).json({ message: "No data provided or invalid format." });
         }
 
-        const leads = leadsData.map((lead) => ({
+        const Leads = req.db.model("Lead");
+
+        // Extract emails and phone numbers from incoming leads
+        const emails = leadsData.map(lead => lead.Email).filter(email => email);
+
+        // Check for existing leads with the same email or phone number
+        const existingLeads = await Leads.find({
+            $or: [{ email: { $in: emails } }]
+        });
+
+        // Filter out duplicate leads
+        const newLeads = leadsData.filter(
+            lead => !existingLeads.some(
+                existing => existing.email === lead.Email || existing.mobilenumber === lead.Phone
+            )
+        );
+
+        if (newLeads.length === 0) {
+            return res.status(409).json({ message: "Leads with these details already exist." });
+        }
+
+        // Map and insert new leads
+        const leadsToInsert = newLeads.map((lead) => ({
             name: lead.Name,
             mobilenumber: lead.Phone,
             address: lead.City || "",
@@ -353,34 +373,27 @@ const addLeadsFromTelecaller = async (req, res) => {
             date: lead.Date || "",
             id: lead.Id || null,
             email: lead.Email,
-            assignedTo: [telecallerId],  // Assign to telecaller
-            adminId: adminid,  // Assign to admin
-            status: "assigned" // Set lead status as assigned
+            assignedTo: [telecallerId],
+            adminId: adminid,
+            status: "assigned"
         }));
 
-        console.log("Processing leads...");
+        const insertedLeads = await Leads.insertMany(leadsToInsert);
 
-        const Leads = req.db.model("Lead");
-        const result = await Leads.insertMany(leads);
-        console.log("Leads inserted successfully:", result.length);
+        console.log(`Inserted ${insertedLeads.length} new leads`);
 
+        // Update admin and telecaller counts
         const superAdminDbURI = process.env.MONGODB_SUPERADMINURI;
         const superAdminConnection = await mongoose.createConnection(superAdminDbURI).asPromise();
-        console.log("Connected successfully to SuperAdmin DB");
 
         const AdminModel = superAdminConnection.model("Admin", require("../schema/Adminschema"));
-        await AdminModel.updateOne(
-            { _id: adminid },
-            { $inc: { leads: result.length } }
-        );
-        console.log("Updated Admin leads count.");
+        await AdminModel.updateOne({ _id: adminid }, { $inc: { leads: insertedLeads.length } });
 
         const TelecallerModel = superAdminConnection.model("Telecaller", require("../schema/telecallerschema"));
         await TelecallerModel.updateOne(
             { _id: telecallerId },
-            { $inc: { assignedLeads: result.length } }
+            { $inc: { assignedLeads: insertedLeads.length } }
         );
-        console.log("Updated Telecaller leads count.");
 
         // Assign Leads to Telecaller
         const Telecaller = req.db.model("Telecaller");
@@ -389,16 +402,13 @@ const addLeadsFromTelecaller = async (req, res) => {
             return res.status(404).json({ message: "Telecaller not found." });
         }
 
-        for (const lead of result) {
-            telecaller.leads.push(lead._id);
-        }
-
-        telecaller.pending += result.length;
+        telecaller.leads.push(...insertedLeads.map(lead => lead._id));
+        telecaller.pending += insertedLeads.length;
         await telecaller.save();
 
         res.status(201).json({
-            message: "Leads uploaded and assigned successfully",
-            totalLeadsInserted: result.length
+            message: `${insertedLeads.length} new leads added successfully.`,
+            totalLeadsInserted: insertedLeads.length
         });
 
     } catch (err) {
@@ -406,6 +416,7 @@ const addLeadsFromTelecaller = async (req, res) => {
         res.status(500).json({ message: "Error uploading leads", error: err.message });
     }
 };
+
 
 
 
