@@ -6,6 +6,7 @@ import axios from "axios";
 import { RiAdminLine, RiShieldUserLine, RiCloseLine, RiUserAddLine } from "react-icons/ri";
 import Sidebar from "../../../utils/sidebar";
 import "react-toastify/dist/ReactToastify.css";
+import useThemeStore from "../../store/themestore";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -26,6 +27,7 @@ export default function SuperAdminDashboard() {
   const [username, setUsername] = useState("");
   const [superadminid, setSuperadminid] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { isDarkTheme } = useThemeStore();
 
   useEffect(() => {
     const superadmindetails = JSON.parse(localStorage.getItem("superadmindetails"));
@@ -86,7 +88,7 @@ export default function SuperAdminDashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
       <div className="lg:w-[250px] w-0">
         <Sidebar />
       </div>
@@ -99,7 +101,9 @@ export default function SuperAdminDashboard() {
         >
           <div className="text-center mb-12">
             <motion.h1 
-              className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"
+              className={`text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r ${
+                isDarkTheme ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
+              }`}
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -107,7 +111,7 @@ export default function SuperAdminDashboard() {
               Welcome, {username || "SuperAdmin"}!
             </motion.h1>
             <motion.p 
-              className="text-gray-400 text-lg"
+              className={isDarkTheme ? "text-gray-400 text-lg" : "text-gray-600 text-lg"}
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -123,14 +127,26 @@ export default function SuperAdminDashboard() {
           >
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="p-6 rounded-xl bg-gradient-to-br from-purple-900/50 to-purple-800/30 border border-purple-700/50 shadow-xl"
+              className={`p-6 rounded-xl ${
+                isDarkTheme 
+                  ? 'bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-700/50' 
+                  : 'bg-gradient-to-br from-purple-100 to-purple-50 border-purple-200'
+              } border shadow-xl`}
             >
-              <RiShieldUserLine className="w-12 h-12 text-purple-400 mb-4" />
-              <h3 className="text-xl font-semibold text-purple-300 mb-2">Super Administrators</h3>
-              <p className="text-gray-400">Manage system-wide access and control</p>
+              <RiShieldUserLine className={`w-12 h-12 ${isDarkTheme ? 'text-purple-400' : 'text-purple-600'} mb-4`} />
+              <h3 className={`text-xl font-semibold ${isDarkTheme ? 'text-purple-300' : 'text-purple-700'} mb-2`}>
+                Super Administrators
+              </h3>
+              <p className={isDarkTheme ? "text-gray-400" : "text-gray-600"}>
+                Manage system-wide access and control
+              </p>
               <button
                 onClick={() => setShowModal("superAdmin")}
-                className="mt-4 px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-all flex items-center gap-2"
+                className={`mt-4 px-6 py-2 ${
+                  isDarkTheme 
+                    ? 'bg-purple-600 hover:bg-purple-700' 
+                    : 'bg-purple-500 hover:bg-purple-600'
+                } rounded-lg text-white font-medium transition-all flex items-center gap-2`}
               >
                 <RiUserAddLine />
                 Add Super Admin
@@ -139,14 +155,26 @@ export default function SuperAdminDashboard() {
 
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="p-6 rounded-xl bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 shadow-xl"
+              className={`p-6 rounded-xl ${
+                isDarkTheme 
+                  ? 'bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-700/50' 
+                  : 'bg-gradient-to-br from-blue-100 to-blue-50 border-blue-200'
+              } border shadow-xl`}
             >
-              <RiAdminLine className="w-12 h-12 text-blue-400 mb-4" />
-              <h3 className="text-xl font-semibold text-blue-300 mb-2">Administrators</h3>
-              <p className="text-gray-400">Manage department-level administrators</p>
+              <RiAdminLine className={`w-12 h-12 ${isDarkTheme ? 'text-blue-400' : 'text-blue-600'} mb-4`} />
+              <h3 className={`text-xl font-semibold ${isDarkTheme ? 'text-blue-300' : 'text-blue-700'} mb-2`}>
+                Administrators
+              </h3>
+              <p className={isDarkTheme ? "text-gray-400" : "text-gray-600"}>
+                Manage department-level administrators
+              </p>
               <button
                 onClick={() => setShowModal("admin")}
-                className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-all flex items-center gap-2"
+                className={`mt-4 px-6 py-2 ${
+                  isDarkTheme 
+                    ? 'bg-blue-600 hover:bg-blue-700' 
+                    : 'bg-blue-500 hover:bg-blue-600'
+                } rounded-lg text-white font-medium transition-all flex items-center gap-2`}
               >
                 <RiUserAddLine />
                 Add Admin
@@ -168,24 +196,36 @@ export default function SuperAdminDashboard() {
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  className="w-full max-w-md bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 relative border border-gray-700"
+                  className={`w-full max-w-md rounded-xl shadow-2xl p-6 relative border ${
+                    isDarkTheme 
+                      ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' 
+                      : 'bg-white border-gray-200'
+                  }`}
                 >
                   <button
                     onClick={() => setShowModal(null)}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/50 transition-colors"
+                    className={`absolute top-4 right-4 ${
+                      isDarkTheme 
+                        ? 'text-gray-400 hover:text-white hover:bg-gray-700/50' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    } p-1 rounded-full transition-colors`}
                   >
                     <RiCloseLine className="w-5 h-5" />
                   </button>
 
-                  <h2 className="text-2xl font-bold text-center mb-6 text-white">
+                  <h2 className={`text-2xl font-bold text-center mb-6 ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
                     Add {showModal === "admin" ? "Administrator" : "Super Administrator"}
                   </h2>
 
                   <form onSubmit={(e) => handleSubmit(e, showModal)} className="space-y-4">
                     <div>
-                      <label className="text-sm text-gray-400">Name</label>
+                      <label className={isDarkTheme ? "text-sm text-gray-400" : "text-sm text-gray-600"}>Name</label>
                       <input
-                        className="w-full mt-1 p-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        className={`w-full mt-1 p-3 rounded-lg ${
+                          isDarkTheme 
+                            ? 'bg-gray-700/50 border-gray-600 text-white' 
+                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                        } border focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                         name="name"
                         placeholder="Enter name"
                         value={showModal === "admin" ? adminData.name : superAdminData.name}
@@ -195,9 +235,13 @@ export default function SuperAdminDashboard() {
                     </div>
 
                     <div>
-                      <label className="text-sm text-gray-400">Email</label>
+                      <label className={isDarkTheme ? "text-sm text-gray-400" : "text-sm text-gray-600"}>Email</label>
                       <input
-                        className="w-full mt-1 p-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        className={`w-full mt-1 p-3 rounded-lg ${
+                          isDarkTheme 
+                            ? 'bg-gray-700/50 border-gray-600 text-white' 
+                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                        } border focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                         name="email"
                         type="email"
                         placeholder="Enter email"
@@ -208,9 +252,13 @@ export default function SuperAdminDashboard() {
                     </div>
 
                     <div>
-                      <label className="text-sm text-gray-400">Password</label>
+                      <label className={isDarkTheme ? "text-sm text-gray-400" : "text-sm text-gray-600"}>Password</label>
                       <input
-                        className="w-full mt-1 p-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        className={`w-full mt-1 p-3 rounded-lg ${
+                          isDarkTheme 
+                            ? 'bg-gray-700/50 border-gray-600 text-white' 
+                            : 'bg-gray-50 border-gray-300 text-gray-900'
+                        } border focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                         name="password"
                         type="password"
                         placeholder="Enter password"
@@ -225,8 +273,8 @@ export default function SuperAdminDashboard() {
                       disabled={isLoading}
                       className={`w-full py-3 rounded-lg text-white font-semibold transition-all flex items-center justify-center gap-2
                         ${showModal === "admin" 
-                          ? "bg-blue-600 hover:bg-blue-700" 
-                          : "bg-purple-600 hover:bg-purple-700"
+                          ? `${isDarkTheme ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'}`
+                          : `${isDarkTheme ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-500 hover:bg-purple-600'}`
                         } ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
                     >
                       {isLoading ? (
@@ -262,7 +310,7 @@ export default function SuperAdminDashboard() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme={isDarkTheme ? "dark" : "light"}
       />
     </div>
   );

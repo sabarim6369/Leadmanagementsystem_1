@@ -17,20 +17,27 @@ import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useThemeStore from "../../store/themestore";
 
-const PasswordInput = memo(({ type, value, onChange, placeholder, showPassword, toggleShow }) => (
+const PasswordInput = memo(({ type, value, onChange, placeholder, showPassword, toggleShow, isDarkTheme }) => (
   <div className="relative">
     <input
       type={showPassword ? "text" : "password"}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      className={`w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+        isDarkTheme 
+          ? "bg-gray-800 border-gray-600 text-white placeholder-gray-400" 
+          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+      }`}
     />
     <button
       type="button"
       onClick={toggleShow}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+      className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${
+        isDarkTheme ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900"
+      }`}
     >
       {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
     </button>
@@ -62,6 +69,7 @@ const SuperadminProfile = () => {
     totalTelecallers: 0,
     totalleads: 0
   });
+  const { isDarkTheme } = useThemeStore();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -118,7 +126,7 @@ const SuperadminProfile = () => {
 
       if (response.status === 200) {
         setSuccess("Password changed successfully!");
-        toast.success("Password changed successfully!", { position: "top-right",autoClose:2000});
+        toast.success("Password changed successfully!", { position: "top-right", autoClose: 2000 });
         setPasswordData({
           oldPassword: "",
           newPassword: "",
@@ -160,17 +168,17 @@ const SuperadminProfile = () => {
 
   if (!superadmindata) {
     return (
-      <div className="flex h-screen bg-gray-900">
+      <div className={`flex h-screen ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="lg:w-[250px] w-0">
           <Sidebar />
         </div>
-        <div className="text-white">Loading...</div>
+        <div className={isDarkTheme ? "text-white" : "text-gray-900"}>Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900">
+    <div className={`flex min-h-screen ${isDarkTheme ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gray-200'}`}>
       <div className="lg:w-[250px] w-0">
         <Sidebar />
       </div>
@@ -181,16 +189,24 @@ const SuperadminProfile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="w-full h-full flex flex-col items-center"
         >
-          <div className="w-full max-w-6xl bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
+          <div className={`w-full max-w-6xl rounded-2xl shadow-xl p-8 ${
+            isDarkTheme 
+              ? "bg-gray-800 border-gray-700" 
+              : "bg-white border-gray-200"
+          }`}>
             <div className="relative flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold text-white">Profile</h1>
+              <h1 className={`text-3xl font-bold ${isDarkTheme ? "text-white" : "text-gray-900"}`}>Profile</h1>
               <div className="flex gap-4">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab(activeTab === "profile" ? "password" : "profile")}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    activeTab === "password" ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-700 hover:bg-gray-600"
+                    activeTab === "password" 
+                      ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                      : isDarkTheme 
+                        ? "bg-gray-700 hover:bg-gray-600 text-white" 
+                        : "bg-gray-200 hover:bg-gray-300 text-gray-900"
                   }`}
                 >
                   <FiLock className="w-4 h-4" />
@@ -203,7 +219,11 @@ const SuperadminProfile = () => {
               <>
                 <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
                   <motion.div whileHover={{ scale: 1.05 }} className="relative group">
-                    <div className="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-lg">
+                    <div className={`w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg ${
+                      isDarkTheme 
+                        ? "bg-gray-700 text-white" 
+                        : "bg-gray-200 text-gray-900"
+                    }`}>
                       S
                     </div>
                     <motion.div 
@@ -216,11 +236,15 @@ const SuperadminProfile = () => {
                   </motion.div>
                   
                   <div className="flex-1">
-                    <h2 className="text-3xl font-bold text-white mb-2">{superadmindata.superadmindata?.username}</h2>
-                    <p className="text-gray-400 text-lg mb-4">{superadmindata.superadmindata?.email}</p>
+                    <h2 className={`text-3xl font-bold mb-2 ${isDarkTheme ? "text-white" : "text-gray-900"}`}>
+                      {superadmindata.superadmindata?.username}
+                    </h2>
+                    <p className={`text-lg mb-4 ${isDarkTheme ? "text-gray-400" : "text-gray-600"}`}>
+                      {superadmindata.superadmindata?.email}
+                    </p>
                     <div className="flex gap-4">
-                      <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">Active</span>
-                      <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">Full Access</span>
+                      <span className="px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-sm">Active</span>
+                      <span className="px-3 py-1 bg-blue-500/20 text-blue-600 rounded-full text-sm">Full Access</span>
                     </div>
                   </div>
                 </div>
@@ -232,19 +256,23 @@ const SuperadminProfile = () => {
                       whileHover={{ scale: 1.03 }}
                       onHoverStart={() => setIsHovering(index)}
                       onHoverEnd={() => setIsHovering(null)}
-                      className="relative bg-gray-700 rounded-xl p-6 border border-gray-600 hover:border-blue-500 transition-all duration-300"
+                      className={`relative rounded-xl p-6 transition-all duration-300 ${
+                        isDarkTheme 
+                          ? "bg-gray-700 border-gray-600 hover:border-blue-500" 
+                          : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"
+                      }`}
                     >
                       <motion.div
                         animate={{
                           scale: isHovering === index ? 1.1 : 1,
-                          color: isHovering === index ? "#60A5FA" : "#9CA3AF"
+                          color: isHovering === index ? "#60A5FA" : isDarkTheme ? "#9CA3AF" : "#4B5563"
                         }}
                         className="absolute top-4 right-4"
                       >
-                        <stat.icon className="w-6 h-6 text-white" />
+                        <stat.icon className={`w-6 h-6 ${isDarkTheme ? "text-white" : "text-gray-600"}`} />
                       </motion.div>
-                      <p className="text-gray-400 text-sm mb-2">{stat.label}</p>
-                      <p className="text-2xl font-bold text-white">{stat.value}</p>
+                      <p className={isDarkTheme ? "text-gray-400" : "text-gray-600" + " text-sm mb-2"}>{stat.label}</p>
+                      <p className={`text-2xl font-bold ${isDarkTheme ? "text-white" : "text-gray-900"}`}>{stat.value}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -254,16 +282,22 @@ const SuperadminProfile = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="bg-gray-700 rounded-xl p-6 border border-gray-600"
+                className={`rounded-xl p-6 ${
+                  isDarkTheme 
+                    ? "bg-gray-700 border-gray-600" 
+                    : "bg-white border-gray-200 shadow-sm"
+                }`}
               >
-                <h3 className="text-xl font-semibold text-white mb-6">Change Password</h3>
+                <h3 className={`text-xl font-semibold mb-6 ${isDarkTheme ? "text-white" : "text-gray-900"}`}>
+                  Change Password
+                </h3>
                 {error && (
-                  <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400">
+                  <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-600">
                     {error}
                   </div>
                 )}
                 {success && (
-                  <div className="mb-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-400">
+                  <div className="mb-4 p-3 bg-green-500/20 border border-green-500 rounded-lg text-green-600">
                     {success}
                   </div>
                 )}
@@ -275,6 +309,7 @@ const SuperadminProfile = () => {
                     placeholder="Enter old password"
                     showPassword={showPasswords.old}
                     toggleShow={() => togglePasswordVisibility('old')}
+                    isDarkTheme={isDarkTheme}
                   />
                   <PasswordInput
                     type="new"
@@ -283,6 +318,7 @@ const SuperadminProfile = () => {
                     placeholder="Enter new password"
                     showPassword={showPasswords.new}
                     toggleShow={() => togglePasswordVisibility('new')}
+                    isDarkTheme={isDarkTheme}
                   />
                   <PasswordInput
                     type="confirm"
@@ -291,6 +327,7 @@ const SuperadminProfile = () => {
                     placeholder="Confirm new password"
                     showPassword={showPasswords.confirm}
                     toggleShow={() => togglePasswordVisibility('confirm')}
+                    isDarkTheme={isDarkTheme}
                   />
                   <div className="flex gap-4">
                     <motion.button
@@ -307,7 +344,11 @@ const SuperadminProfile = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab("profile")}
-                      className="flex-1 flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-500 px-6 py-3 rounded-lg font-medium text-white"
+                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium ${
+                        isDarkTheme 
+                          ? "bg-gray-600 hover:bg-gray-500 text-white" 
+                          : "bg-gray-200 hover:bg-gray-300 text-gray-900"
+                      }`}
                     >
                       <FiX className="w-5 h-5" />
                       Cancel
